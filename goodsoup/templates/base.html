@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+    <head>
+        <title>
+            착한탕국
+        </title>
+        <meta charset="utf-8">
+        <meta name="description" content="착한탕국">
+        <meta name="author" content="sisobus">
+        <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+        <link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static',filename='css/icomoon/style.css') }}">
+        <style>
+        @import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);
+        body {
+            font-family: "Nanum Gothic", sans-serif;
+        }
+        .flash {
+            color: red;
+        }
+        </style>
+    </head>
+    <body id="home" style="border-top:8px solid #ffffff;">
+        <div class="container-fluid">
+            <div class="menu-wrapper" style="border-top:8px solid #ffffff;">
+                <a href="#" class="close-menu visible-xs"><i class="icon-close"></i></a>
+                <h3 class="visible-xs">사이드 바</h3>
+                <ul class="nav-list text-center effect">
+                    <li class="active"><a href="#">국</a></li>
+                    <li><a href="#">탕국아저씨</a></li>
+                    <li><a href="#">게시판</a></li>
+                    <li><a href="#">회원가입/로그인</a></li>
+                </ul>
+                <div class="visible-xs mt-info">
+                    <h3>More</h3>
+                    <ul>
+                        <li><a href="#">more</a></li>
+                        <li><a href="#">more</a></li>
+                        <li><a href="#">more</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div id="wrap">
+            <div id="main-nav" class="">
+                <div class="container-fluid">
+                    <div class="nav-header">
+                        <a href="/" class="nav-brand" style="border:0;">착한<span>탕국</span></a>
+                        <a class="nav-icon pull-right visible-xs menu-link" href="#"><i class="icon-menu2"></i></a>
+                        <a class="nav-icon-outline cart pull-right" href="cart.html"><i class="icon-cart"></i><span class="badge">3</span></a>
+                    </div>
+                </div>
+            </div>
+            {% block content %}
+            {% endblock %}
+            <footer class="footer" style="margin-top:20px;">
+                <div class="container-fluid">
+                    <div class="pull-left copyright">
+                        <p>착한<b>탕국</b> &copy; 2016 by 착한탕국 All Rights Reserved.</p>
+                        <p>위치 : 회사 위치 쓰기</p>
+                        <p>전화번호 : 회사 번호 쓰기</p>
+                        <ul class="nav-list effect">
+                            <li><a href="#">이용약관</a></li>
+                            <li><a href="#">개인정보취급방침</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="pull-right copyright">
+                        <ul class="social-links">
+                            <li><a href="https://twitter.com/"><i class="icon-twitter"></i></a></li>
+                            <li><a href="https://facebook.com/"><i class="icon-facebook"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="{{ url_for('static',filename='js/placeholders.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static',filename='js/custom.js') }}"></script>
+    </body>
+</html>

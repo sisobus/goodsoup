@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container-fluid productlist">
+    <div class="row">
+        <div class="col-sm-8">
+            <a href="#">
+                <img src="{{ url_for('static',filename='img/vase_1a.jpg')}}" class="img-responsive" alt="item">
+                <span class="productlist-price-container">
+                </span>
+            </a>
+        </div>
+        <div class="col-sm-4">
+            <a href="#">
+                <img src="{{ url_for('static',filename='img/vase_1a.jpg')}}" class="img-responsive" alt="item">
+                <span class="productlist-price-container">
+                    <span class="product-price">
+                        <span class="">28,000원</span>
+                    </span>
+                </span>
+            </a>
+        </div>
+        <div class="col-sm-4">
+            <a href="#">
+                <img src="{{ url_for('static',filename='img/vase_1a.jpg')}}" class="img-responsive" alt="item">
+                <span class="productlist-price-container">
+                    <span class="product-price">
+                        <span class="">7,000원</span>
+                    </span>
+                </span>
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

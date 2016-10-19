@@ -1,0 +1,4 @@
+goodsoup/*.pyc
+goodsoup/config.py
+goodsoup/venv/*
+goodsoup/static/files/*
