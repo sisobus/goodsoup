@@ -17,10 +17,56 @@ app = Flask(__name__)
 
 import os
 import sys
+import utils
+navbar_menus = utils.enum('HOME','SOUP','ABOUT','BOARD','LOGIN','CART')
 
 @app.route('/')
 def home():
-    return render_template('home.html')
+    ret = {
+            'navbar_menus': navbar_menus,
+            'selected_navbar_index': navbar_menus.HOME,
+            }
+    return render_template('home.html',ret=ret)
+
+@app.route('/soup')
+def soup():
+    ret = {
+            'navbar_menus': navbar_menus,
+            'selected_navbar_index': navbar_menus.SOUP,
+            }
+    return render_template('soup.html',ret=ret)
+
+@app.route('/about')
+def about():
+    ret = {
+            'navbar_menus': navbar_menus,
+            'selected_navbar_index': navbar_menus.ABOUT,
+            }
+    return render_template('about.html',ret=ret)
+
+@app.route('/board')
+def board():
+    ret = {
+            'navbar_menus': navbar_menus,
+            'selected_navbar_index': navbar_menus.BOARD,
+            }
+    return render_template('board.html',ret=ret)
+
+@app.route('/login')
+def login():
+    ret = {
+            'navbar_menus': navbar_menus,
+            'selected_navbar_index': navbar_menus.LOGIN,
+            }
+    return render_template('login.html',ret=ret)
+
+@app.route('/cart')
+def cart():
+    ret = {
+            'navbar_menus': navbar_menus,
+            'selected_navbar_index': navbar_menus.CART,
+            }
+    return render_template('/cart.html',ret=ret)
 
 if __name__ == '__main__':
     reload(sys)

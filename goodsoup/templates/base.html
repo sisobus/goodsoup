@@ -27,10 +27,18 @@
                 <a href="#" class="close-menu visible-xs"><i class="icon-close"></i></a>
                 <h3 class="visible-xs">사이드 바</h3>
                 <ul class="nav-list text-center effect">
-                    <li class="active"><a href="#">국</a></li>
-                    <li><a href="#">탕국아저씨</a></li>
-                    <li><a href="#">게시판</a></li>
-                    <li><a href="#">회원가입/로그인</a></li>
+                    <li {% if ret.navbar_menus.SOUP == ret.selected_navbar_index %}class="active"{% endif %}>
+                        <a href="/soup">국</a>
+                    </li>
+                    <li {% if ret.navbar_menus.ABOUT == ret.selected_navbar_index %}class="active"{% endif %}>
+                        <a href="/about">탕국아저씨</a>
+                    </li>
+                    <li {% if ret.navbar_menus.BOARD == ret.selected_navbar_index %}class="active"{% endif %}>
+                        <a href="/board">게시판</a>
+                    </li>
+                    <li {% if ret.navbar_menus.LOGIN == ret.selected_navbar_index %}class="active"{% endif %}>
+                        <a href="/login">회원가입/로그인</a>
+                    </li>
                 </ul>
                 <div class="visible-xs mt-info">
                     <h3>More</h3>
@@ -48,7 +56,7 @@
                     <div class="nav-header">
                         <a href="/" class="nav-brand" style="border:0;">착한<span>탕국</span></a>
                         <a class="nav-icon pull-right visible-xs menu-link" href="#"><i class="icon-menu2"></i></a>
-                        <a class="nav-icon-outline cart pull-right" href="cart.html"><i class="icon-cart"></i><span class="badge">3</span></a>
+                        <a class="nav-icon-outline cart pull-right" href="/cart"><i class="icon-cart"></i><span class="badge">3</span></a>
                     </div>
                 </div>
             </div>
