@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+.price-won {
+    font-size: 20px;
+}
+</style>
+<div class="container-fluid hidden-xs">
+    <div class="row">
+        <ol class="breadcrumb">
+            <li><a href="/soup">국</a></li>
+            <li class="active">오징어국</li>
+        </ol>
+    </div>
+</div>
+<div class="container-fluid product">
+    <div class="row visible-xs product-mobile">
+        <div class="col-xs-12 text-center">
+            <h2 class="product-title">오징어국</h2>
+            <div class="product-price">
+                <span class="price-won">8000원</span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-8 ">
+            <img src="{{ url_for('static',filename='files/soup_5.jpg')}}" class="img-responsive product-img" alt="item">
+            <img src="{{ url_for('static',filename='files/soup_5.jpg')}}" class="img-responsive product-img" alt="item">
+            <img src="{{ url_for('static',filename='files/chef.jpg')}}" class="img-responsive product-img" alt="item">
+        </div>
+        <div class="col-sm-4">
+            <h2 class="product-title hidden-xs">오징어국</h2>
+            <div class="product-price hidden-xs">
+                <span class="price-won">8000원</span>
+            </div>
+            <div class="product-detail">
+                <p>
+                오징어가 많이 들어있는 오징어국입니다. 
+                </p>
+                <ul>
+                    <li>
+                    맛있습니다.
+                    </li>
+                    <li>
+                    시원합니다.
+                    </li>
+                </ul>
+            </div>
+            <form action="#" method="POST" class="myform">
+                <div class="form-group clearfix">
+                    <label class="control-label">갯수</label>
+                    <select class="form-control">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+                <div class="product-btn">
+                    <a href="#" class="btn">장바구니 담기</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

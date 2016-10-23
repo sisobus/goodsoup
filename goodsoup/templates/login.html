@@ -1,4 +1,78 @@
 {% extends 'base.html' %}
 {% block content %}
-로그인
+<div class="container-fluid cart-list">
+    <div class="row">
+        <div class="col-sm-6">
+            <form action="#" method="post" novalidate  class="myform">
+
+                <h2 class="text-center">로그인</h2>
+                <!-- <h3 class="text-center">Login to shop</h3> -->
+
+                <div class="form-group">
+                    <label class="control-label">이메일</label>
+                    <input name="email" placeholder="이메일" class="form-control" type="text">
+                </div>
+                <div class="form-group">
+                    <label class="control-label">비밀번호</label>
+                    <input name="Password" placeholder="비밀번호" class="form-control" type="text">
+                </div>
+
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox">
+                        <span>Remember Me</span>
+                    </label>
+                </div>
+
+                <!--                            <div class="radio">
+                              <label>
+                                <input type="radio" value="option1" >
+                                <span>Option one is this and that&mdash;be sure</span>
+                              </label>
+                            </div> -->
+
+                <p><button name="submit" type="submit" class="btn btn-store btn-block">로그인</button></p>
+            </form>
+        </div>
+        <div class="col-sm-6">
+            <form action="#" method="post" novalidate class="myform">
+                <h2 class="text-center">회원가입</h2>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">이름</label>
+                            <input name="name" placeholder="이름" class="form-control" type="text">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">이메일</label>
+                    <input name="email" placeholder="이메일" class="form-control" type="text">
+                </div>
+                <div class="form-group">
+                    <label class="control-label">비밀번호</label>
+                    <input name="Password" placeholder="비밀번호" class="form-control" type="text">
+                </div>
+                <div class="form-group">
+                    <label class="control-label">비밀번호 확인</label>
+                    <input name="Password_check" placeholder="비밀번호 확인" class="form-control" type="text">
+                </div>
+                <div class="form-group">
+                    <label class="control-label">주소</label>
+                    <input name="Password" placeholder="주소" class="form-control" type="text">
+                </div>
+
+                <p><button name="submit" type="submit" class="btn btn-store btn-block">회원가입</button></p>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12 text-center show-more">
+            <a href="/" class="btn btn-outline">돌아가기</a>
+        </div>
+    </div>
+
+</div>
 {% endblock %}

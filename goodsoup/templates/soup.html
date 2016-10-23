@@ -1,4 +1,73 @@
 {% extends 'base.html' %}
 {% block content %}
-국 메뉴, 국 상세페이지로 이동
+<div class="container-fluid productlist">
+    <div class="row">
+        <div class="col-sm-8">
+            <a href="/soup_detail/1">
+                <img src="{{ url_for('static',filename='files/soup_5.jpg')}}" class="img-responsive" alt="item">
+                <span class="productlist-price-container">
+                    <span class="product-price">
+                        <span class="">8,000원</span>
+                    </span>
+                </span>
+            </a>
+        </div>
+        <div class="col-sm-4">
+            <a href="/soup_detail/1">
+                <img src="{{ url_for('static',filename='files/soup_2.jpg')}}" class="img-responsive" alt="item">
+                <span class="productlist-price-container">
+                    <span class="product-price">
+                        <span class="">28,000원</span>
+                    </span>
+                </span>
+            </a>
+        </div>
+        <div class="col-sm-4">
+            <a href="/soup_detail/1">
+            <a href="#">
+                <img src="{{ url_for('static',filename='files/soup_3.jpg')}}" class="img-responsive" alt="item">
+                <span class="productlist-price-container">
+                    <span class="product-price">
+                        <span class="">7,000원</span>
+                    </span>
+                </span>
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4 special">
+            <div class="col-sm-12">
+            <a href="/soup_detail/1">
+                    <img src="{{ url_for('static',filename='files/soup_4.jpg')}}" class="img-responsive" alt="item">
+                    <span class="productlist-price-container">
+                        <span class="product-price">
+                            <span class="">14,000원</span>
+                        </span>
+                    </span>
+                </a>
+            </div>
+            <div class="col-sm-12">
+            <a href="/soup_detail/1">
+                    <img src="{{ url_for('static',filename='files/soup_1.jpg')}}" class="img-responsive" alt="item">
+                    <span class="productlist-price-container">
+                        <span class="product-price">
+                            <span class="">28,000원</span>
+                        </span>
+                    </span>
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <a href="/soup_detail/1">
+                <img src="{{ url_for('static',filename='files/soup_2.jpg')}}" class="img-responsive" alt="item">
+                <span class="productlist-price-container">
+                    <span class="product-price">
+                        <span class="">28,000원</span>
+                    </span>
+                </span>
+            </a>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

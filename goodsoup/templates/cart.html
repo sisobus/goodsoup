@@ -1,4 +1,104 @@
 {% extends 'base.html' %}
 {% block content %}
-장바구니 
+<div class="container-fluid title">
+    <div class="row">
+        <div class="col-sm-12">
+            <h2>장바구니</h2>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid cart-list" >
+    <div class="row">
+        <div class="col-sm-8">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>국</th>
+                        <th>개별 가격</th>
+                        <th class="text-center">갯수</th>
+                        <th class="text-right">총 가격</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr >
+                    <td class="vert-align"><a href="/soup_detail/1">사골국</a></td>
+                    <td class="vert-align">8,000원</td>
+                    <td class="text-center vert-align"><input type="number" min="1" max="9" class="form-control form-control-inline" style="width: 52px!important;" value="1"></td>
+                    <td class="text-right vert-align">8,000원</td>
+                    <td class="text-center vert-align"><a href="#" class="remove-item"><i class="icon-close"></i></a></td>
+                </tr>
+                <tr >
+                    <td class="vert-align"><a href="/soup_detail/1">오징어국</a></td>
+                    <td class="vert-align">8,000원</td>
+                    <td class="text-center vert-align"><input type="number" min="1" max="9" class="form-control form-control-inline" style="width: 52px!important;" value="1"></td>
+                    <td class="text-right vert-align">8,000원</td>
+                    <td class="text-center vert-align"><a href="#" class="remove-item"><i class="icon-close"></i></a></td>
+                </tr>
+<!--
+if nan: 
+<tr>
+    <td colspan="5">
+        <h2 class="text-center">Your cart is empty.</h2>
+    </td>
+</tr>
+-->
+                </tbody>
+            </table>
+
+            <h4>주문 유의사항</h4>
+            <p>
+            국은 차갑게 배달됩니다?
+            </p>
+
+        </div>
+<!--
+if nan:
+
+-->
+        <div class="col-sm-4 " > 
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th colspan="3" class="text-center">주문 요약 </th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>가격 :</td>
+                    <td></td>
+                    <td class="text-right"><b>16,000원</b></td>
+                </tr>
+                <tr>
+                    <td>배송비 :</td>
+                    <td></td>
+                    <td class="text-right">0원</td>
+                </tr>
+                <tr>
+                    <td>부가세 :</td>
+                    <td></td>
+                    <td class="text-right">0원</td>
+                </tr>
+                <tr>
+                    <td>총 :</td>
+                    <td></td>
+                    <td id="total" class="text-right">
+                        16,000원
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <a href="#" class="btn btn-right">다음으로</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12 text-center show-more">
+            <a href="/" class="btn btn-outline">돌아가기</a>
+        </div>
+    </div>
+
+</div>
 {% endblock %}

@@ -66,7 +66,15 @@ def cart():
             'navbar_menus': navbar_menus,
             'selected_navbar_index': navbar_menus.CART,
             }
-    return render_template('/cart.html',ret=ret)
+    return render_template('cart.html',ret=ret)
+
+@app.route('/soup_detail/<int:soup_id>')
+def soup_detail(soup_id):
+    ret = {
+            'navbar_menus': navbar_menus,
+            'selected_navbar_index': navbar_menus.SOUP,
+            }
+    return render_template('soup_detail.html',ret=ret)
 
 if __name__ == '__main__':
     reload(sys)
