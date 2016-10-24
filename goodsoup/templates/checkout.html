@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid title">
+    <div class="row">
+        <div class="col-sm-12">
+            <h2>배송정보</h2>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid cart-list">
+    <div class="row">
+        <div class="col-sm-6">
+            <form action="#" method="post" novalidate id="order-form" class="myform">
+                <h3 class="text-center">배송정보</h3>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">이름</label>
+                            <input name="name" placeholder="이름" class="form-control" type="text">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-4" style="padding:0;">
+                        <label class="control-label">시</label>
+                        <select id="si" class="form-control" tabindex="9">
+                            <option disabled="disabled" selected="selected" value="">시</option>
+                            <option value="수원시">수원시</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4" style="padding:0px 10px 0px 10px;">
+                        <label class="control-label">구</label>
+                        <select id="gu" class="form-control" tabindex="9">
+                            <option disabled="disabled" selected="selected" value="">구</option>
+                            <option value="장안구">장안구</option>
+                            <option value="권선구">권선구</option>
+                            <option value="팔달구">팔달구</option>
+                            <option value="영통구">영통구</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4" style="padding:0;">
+                        <label class="control-label">동</label>
+                        <select id="dong" class="form-control" tabindex="9">
+                            <option disabled="disabled" selected="selected" value="">동</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">나머지 주소</label>
+                    <input name="address" placeholder="나머지 주소" class="form-control" type="text" style="margin-top:15px;">
+                </div>
+                <div class="form-group">
+                    <label class="control-label">연락처</label>
+                    <input name="phone" placeholder="연락처" class="form-control" type="text">
+                </div>
+            </form>
+        </div>
+        <div class="col-sm-6 ">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th colspan="3" class="text-center">주문 요약 </th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>가격 :</td>
+                    <td></td>
+                    <td class="text-right"><b>16,000원</b></td>
+                </tr>
+                <tr>
+                    <td>배송비 :</td>
+                    <td></td>
+                    <td class="text-right">0원</td>
+                </tr>
+                <tr>
+                    <td>부가세 :</td>
+                    <td></td>
+                    <td class="text-right">0원</td>
+                </tr>
+                <tr>
+                    <td>총 :</td>
+                    <td></td>
+                    <td id="total" class="text-right">
+                        16,000원
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div id="pay" class="btn btn-right">결제하기</div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12 text-center show-more">
+            <a href="/" class="btn btn-outline">돌아가기</a>
+        </div>
+    </div>
+
+</div>
+<script>
+$(document).ready(function() {
+    IMP.init('imp27079569');
+});
+$('#pay').click(function() {
+IMP.request_pay({
+    pg : 'html5_inicis',
+    pay_method : 'card',
+    merchant_uid : 'merchant_' + new Date().getTime(),
+    name : '주문명:결제테스트',
+    amount : 14000,
+    buyer_email : 'iamport@siot.do',
+    buyer_name : '구매자이름',
+    buyer_tel : '010-1234-5678',
+    buyer_addr : '서울특별시 강남구 삼성동',
+    buyer_postcode : '123-456'
+    }, function(rsp) {
+    if ( rsp.success ) {
+    var msg = '결제가 완료되었습니다.';
+    msg += '고유ID : ' + rsp.imp_uid;
+    msg += '상점 거래ID : ' + rsp.merchant_uid;
+    msg += '결제 금액 : ' + rsp.paid_amount;
+    msg += '카드 승인번호 : ' + rsp.apply_num;
+    } else {
+    var msg = '결제에 실패하였습니다.';
+    msg += '에러내용 : ' + rsp.error_msg;
+    }
+
+    alert(msg);
+    });
+});
+</script>
+{% endblock %}

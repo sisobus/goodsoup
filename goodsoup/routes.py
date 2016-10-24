@@ -76,6 +76,14 @@ def soup_detail(soup_id):
             }
     return render_template('soup_detail.html',ret=ret)
 
+@app.route('/checkout')
+def checkout():
+    ret = {
+            'navbar_menus': navbar_menus,
+            'selected_navbar_index': navbar_menus.SOUP,
+            }
+    return render_template('checkout.html',ret=ret)
+
 if __name__ == '__main__':
     reload(sys)
     sys.setdefaultencoding('utf8')
