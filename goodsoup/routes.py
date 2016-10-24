@@ -52,6 +52,14 @@ def board():
             }
     return render_template('board.html',ret=ret)
 
+@app.route('/board_detail/<int:board_id>')
+def board_detail(board_id):
+    ret = {
+            'navbar_menus': navbar_menus,
+            'selected_navbar_index': navbar_menus.BOARD,
+            }
+    return render_template('board_detail.html',ret=ret)
+
 @app.route('/login')
 def login():
     ret = {
