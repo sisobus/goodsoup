@@ -20,6 +20,18 @@ import sys
 import utils
 navbar_menus = utils.enum('HOME','SOUP','ABOUT','BOARD','LOGIN','CART')
 
+import json
+
+with open('/var/www/goodsoup/goodsoup/static/json/address.json','r') as fp:
+    addresses = json.loads(fp.read())
+
+@app.route('/json/address')
+def address():
+    """
+    : search : route_address
+    """
+    return jsonify(results=addresses)
+
 @app.route('/')
 def home():
     ret = {

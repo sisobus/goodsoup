@@ -23,28 +23,26 @@
                 </div>
 
                 <div class="form-group">
-                    <div class="col-sm-4" style="padding:0;">
-                        <label class="control-label">시</label>
-                        <select id="si" class="form-control" tabindex="9">
-                            <option disabled="disabled" selected="selected" value="">시</option>
-                            <option value="수원시">수원시</option>
-                        </select>
-                    </div>
-                    <div class="col-sm-4" style="padding:0px 10px 0px 10px;">
-                        <label class="control-label">구</label>
-                        <select id="gu" class="form-control" tabindex="9">
-                            <option disabled="disabled" selected="selected" value="">구</option>
-                            <option value="장안구">장안구</option>
-                            <option value="권선구">권선구</option>
-                            <option value="팔달구">팔달구</option>
-                            <option value="영통구">영통구</option>
-                        </select>
-                    </div>
-                    <div class="col-sm-4" style="padding:0;">
-                        <label class="control-label">동</label>
-                        <select id="dong" class="form-control" tabindex="9">
-                            <option disabled="disabled" selected="selected" value="">동</option>
-                        </select>
+                    <div class="local-search" id="local-search">
+                        <div class="company-item-region" id="sigudong-search" >
+                            <div class="item_box item-region on">
+                                <div class="col-sm-4" style="padding:0;">
+                                    <select id="si" class="form-control" tabindex="9">
+                                        <option>서울시</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-4" style="padding:0px 10px 0px 10px;;">
+                                    <select id="gu" class="form-control" tabindex="9">
+                                        <option>전체</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-4" style="padding:0;">
+                                    <select id="dong" class="form-control" tabindex="9" >
+                                        <option>전체</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="form-group">
@@ -100,9 +98,177 @@
     </div>
 
 </div>
-<script>
+<script type="text/javascript">
+    window.state = {};
+function bindLocal1(obj) {
+        var map = window.state.map;
+        var selects = $(".local-search " + obj + " select");
+        var local1 = $(selects[0]);
+        var local2 = $(selects[1]);
+        var local3 = $(selects[2]);
+        local1.attr("disabled", false);
+        local2.attr("disabled", true);
+        local3.attr("disabled", true);
+        local1.children().remove();
+        var items = window.state.addresses;       
+        local1.append($("<option />").text("경기도").val("경기도"));
+        /*
+        $(items).each(function (i, item) {
+            local1.append($("<option />").text(item.name).val(item.name));
+        });
+        */
+        
+    }
+    function bindLocal2(obj) {
+        var selects = $(".local-search " + obj + " select");
+        var local1 = $(selects[0]);
+        var local2 = $(selects[1]);
+        var local3 = $(selects[2]);
+        var v1 = local1.val();
+        var node = findNode(v1);
+        var option = $("<option />").text("전체");
+        local2.children().remove();
+//        local2.append(option);
+        if (node && node.items) {
+            local2.append($("<option />").text("수원시 권선구"));
+            local2.append($("<option />").text("수원시 영통구"));
+            local2.append($("<option />").text("수원시 장안구"));
+            local2.append($("<option />").text("수원시 팔달구"));
+            local2.attr("disabled", false);
+            /*
+            for (var j = 0; j < node.items.length; j++) {
+                var item2 = node.items[j];
+                var option = $("<option />").text(item2.name);
+                local2.append(option);
+                local2.attr("disabled", false);
+            }
+            */
+        } else {
+            local2.attr("disabled", true);
+        }
+    }
+    function bindLocal3(obj) {
+        var selects = $(".local-search " + obj + " select");
+        var local1 = $(selects[0]);
+        var local2 = $(selects[1]);
+        var local3 = $(selects[2]);
+        var v1 = local1.val();
+        var v2 = local2.val();
+        var node = findNode(v1, v2);
+        if (node) {
+            var option = $("<option />").text("전체");
+            local3.children().remove();
+            local3.append(option);
+        }
+        if (node && node.items) {
+            for (var j = 0; j < node.items.length; j++) {
+                var item2 = node.items[j];
+                var option = $("<option />").text(item2.name);
+                local3.append(option);
+                local3.attr("disabled", false);
+            }
+        } else {
+            var option = $("<option />").text("전체");
+            local3.children().remove();
+            local3.append(option);
+            local3.attr("disabled", true);
+        }
+        
+    }
+function findNode(v1, v2, v3) {
+        if (v1) {
+            var local1s = window.state.addresses;
+            for (var i = 0; i < local1s.length; i++) {
+                var local1 = local1s[i];
+                if (local1.name == v1) {
+                    if (v2) {
+                        var local2s = local1.items;
+                        for (var j = 0; j < local2s.length; j++) {
+                            var local2 = local2s[j];
+                            if (local2.name == v2) {
+                                if (v3) {
+                                    var local3s = local2.items;
+                                    for (var k = 0; k < local3s.items; k++) {
+                                        var local3 = local3s[k];
+                                        if (local3 == v3) {
+                                            return local3;
+                                        }
+                                    }
+                                    return null;
+                                }
+                                return local2;
+                            }
+                        }
+                        return null;
+                    }
+                    return local1;
+                }
+            }
+        }
+        return null;
+    }
+function initLocalSearch() {
+    var items = $(".local-search .company-item-region select");
+        var local1 = $(items[0]);
+        local1.children().remove();
+        local1.append($("<option />").text("로딩 중"))
+        local1.attr("disabled", true);
+        local1.change(function () {
+            bindLocal2(".company-item-region");
+            bindLocal3(".company-item-region");
+        });
+        var local2 = $(items[1]);
+        local2.attr("disabled", true);
+        local2.change(function () {
+            bindLocal3(".company-item-region");
+        });
+        var local3 = $(items[2]);
+        local3.attr("disabled", true);
+        $.when(
+             $.ajax({
+                 url: "/json/address"
+             })
+        ).done(function (data) {
+            data = data.results;
+            var new_data = [];
+            new_data.push(data[8]);
+            new_data.push(data[1]);
+            new_data.push(data[11]);
+            new_data.push(data[7]);
+            new_data.push(data[5]);
+            new_data.push(data[6]);
+            new_data.push(data[10]);
+            new_data.push(data[9]);
+            new_data.push(data[4]);
+            new_data.push(data[0]);
+            new_data.push(data[16]);
+            new_data.push(data[15]);
+            new_data.push(data[3]);
+            new_data.push(data[2]);
+            new_data.push(data[13]);
+            new_data.push(data[12]);
+            new_data.push(data[14]);
+            window.state.addresses = new_data
+            bindLocal1(".company-item-region");
+            bindLocal2(".company-item-region");
+            bindLocal3(".company-item-region");
+            $(".item_submit").removeAttr("disabled");
+        });
+    $(".local-search .company-item-region button").click(function () {
+        var selects = $(".local-search .company-item-region select");
+        var local1 = $(selects[0]);
+        var local2 = $(selects[1]);
+        var local3 = $(selects[2]);
+        var selected = !local3.is(":disabled") ? local3.find("option:selected") : local2.find("option:selected");
+        var lat = selected.data("lat");
+        var lng = selected.data("lng");
+        var zoom = 20 - parseInt(selected.data("zoom"));
+        location.href = "/search/map?lat=" + lat + "&lng=" + lng + "&zoom="+ zoom;
+    });
+}
 $(document).ready(function() {
     IMP.init('imp27079569');
+    initLocalSearch();
 });
 $('#pay').click(function() {
 IMP.request_pay({
