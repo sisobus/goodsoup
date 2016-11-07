@@ -1,5 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
+<style>
+#gu-col {
+    padding: 0px 10px 0px 10px;
+}
+@media screen and (max-width: 767px) {
+    #gu-col {
+        padding: 0;
+    }
+    #si, #gu, #dong {
+        margin-bottom: 10px;
+    }
+}
+</style>
 <div class="container-fluid title">
     <div class="row">
         <div class="col-sm-12">
@@ -31,7 +44,7 @@
                                         <option>서울시</option>
                                     </select>
                                 </div>
-                                <div class="col-sm-4" style="padding:0px 10px 0px 10px;;">
+                                <div class="col-sm-4" id="gu-col">
                                     <select id="gu" class="form-control" tabindex="9">
                                         <option>전체</option>
                                     </select>
