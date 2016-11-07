@@ -28,12 +28,21 @@
         <div class="col-sm-9 blog-content">
             <article>
                 <header>
-                    <h1><a href="#">
+                    <h1>
                             {{ ret.board.title }}
-                    </a></h1>
+                    {% if 'logged_in' in session and (ret.board.user.id == session['user_id'] or session['level'] == 99) %}
+                    <div class="pull-right">
+                        <a href="/board_update/{{ret.board.id}}">
+                            <button class="btn-warning " style="border:0;font-size:20px;padding:10px;">글 수정</button>
+                        </a>
+                        <button class="btn-danger " style="border:0;font-size:20px;padding:10px;" data-toggle="modal" data-target="#delete-board-modal-{{ret.board.id}}">글 삭제</button>
+                        {% include "delete_board_confirm_modal.html" %}
+                    </div>
+                    {% endif %}
+                    </h1>
                 </header>
                 <div class="post-date">
-                    {{ret.board.created_at}} | <a href="#">{{ ret.board.user.username }} </a> <span><a href="#">{{ ret.comments | length }} 개의 댓글</a></span>
+                    {{ret.board.created_at}} | <a href="#">{{ ret.board.user.username }} </a>
                 </div>
                 <div class="content">
                     <div class="summernote">
@@ -47,12 +56,19 @@
                             <img class="media-object img-circle" src="{{url_for('static',filename='img/avatar.png')}}" width="40" height="40" alt="">
                         </a>
                         <div class="media-body">
-                            <h4 class="media-heading"><a href="#">{{comment.user.username}}</a><span>{{comment.created_at.strftime('%Y-%m-%d')}} | </h4>
+                            <h4 class="media-heading"><a href="#">{{comment.user.username}}</a>
+                                <span>{{comment.created_at.strftime('%Y-%m-%d')}} | </span></h4>
                             <p>
                             {{ comment.body }}
+                            {% if 'logged_in' in session and (session['user_id'] == comment.user.id or session['level'] == 99) %}
+                            <i class="fa fa-remove" id="comment-remove-{{comment.id}}" style="padding-left:10px;" data-toggle="modal" data-target="#delete-comment-modal-{{comment.id}}"></i>
+                            {% endif %}
+
+
                             </p>
                         </div>
                     </div> 
+                    {% include "delete_comment_confirm_modal.html" %}
                     {% endfor %}
                     {% if 'logged_in' in session %}
                     <form action="/save_comment/{{ret.board.id}}" method="post" class="myform">

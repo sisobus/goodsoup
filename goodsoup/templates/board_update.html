@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+.btn {
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: normal;
+    text-align: center;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+.btn-sm {
+    padding: 5px 10px 5px 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+}
+.btn i {
+    font-size: 12px;
+    line-height: 1.5;
+}
+.btn i:before {
+    font-size: 12px;
+    line-height: 1.5;
+}
+.btn-default {
+    color: #333333;
+    background-color: #ffffff;
+    border-color: #cccccc;
+}
+.pagination-page-info {
+    padding: .6em;
+    padding-left: 0;
+    width: 40em;
+    margin: .5em;
+    margin-left: 0;
+    font-size: 12px;
+}
+.pagination-page-info b {
+    color: black;
+    padding-left: 2px;
+    padding: .1em .25em;
+    font-size: 150%;
+}
+form select#category {
+    background:white;
+    border-color: #cccccc;
+    border-radius: 3px 0 0 3px;
+    border-style: solid;
+    border-width: 1px 1px 1px 1px;
+    color: #888888;
+    font-size: 14px;
+}
+</style>
+<div class="container-fluid title">
+    <div class="row">
+        <div class="col-sm-12">
+            <h2>전체글보기</h2>
+        </div>
+    </div>
+</div>
+<div class="container-fluid cart-list">
+    <div class="row">
+        <div class="col-sm-9 blog-content">
+            <div class="myform">
+                <form action='/update_board/{{ret.board.id}}' method="post" enctype="multipart/form-data">
+                    {{ ret.board_create_form.hidden_tag() }}
+                    <div  style="display:table-cell;width:89%;padding-right:10px;">
+                        {% for message in ret.board_create_form.title.errors %}
+                        <div class="flash">{{ message }}</div>
+                        {% endfor %}
+                        {{ ret.board_create_form.title(class_="form-control",placeholder="글 제목") }}
+                    </div>
+                    <div style="display:table-cell;">
+                        <select id="category" name="category" class="form-control" tabindex="9">
+                            {% if 'logged_in' in session and session['level'] %}
+                            <option value="1">공지사항</option>
+                            {% endif %}
+                            <option value="2" selected="selected">자유게시판</option>
+                            <option value="3">질문/답변</option>
+                        </select>
+                    </div>
+                    <style>
+.note-editor.note-frame {
+    border: 1px solid #cccccc;
+    margin-top:10px;
+    margin-bottom:10px;
+}
+                    </style>
+                    <textarea id="summernote" name="board_body" style="text-align:left;">
+                        {{ ret.board.body | safe }}
+                    </textarea>
+                    <button type="submit" class="btn btn-primary pull-right" style="color:white;">
+                        작성하기
+                    </button>
+                </form>
+            </div> 
+        </div>
+        <div class="col-sm-3 blog-sidebar">
+            {% include "board_category.html" %}
+        </div>
+    </div>
+</div>
+<script>
+$(document).ready(function() {
+    $('#summernote').summernote({
+        height: 400,
+        lang: 'ko-KR',
+        callbacks: {
+        }
+    });
+});
+</script>
+{% endblock %}

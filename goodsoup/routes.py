@@ -93,7 +93,7 @@ def save_board():
             }
     if request.method == 'POST':
         if not board_create_form.validate_on_submit():
-            return render_template('board_create',ret=ret)
+            return render_template('board_create.html',ret=ret)
         title               = board_create_form.title.data
         user_id             = session['user_id']
         board_category_id   = request.form.get('category')
@@ -194,9 +194,56 @@ def get_comments_by_board_id(board_id):
 ###
 
 ### UPDATE 
+@app.route('/update_board/<int:board_id>',methods=['POST'])
+@login_required
+def update_board(board_id):
+    with app.app_context():
+        board_create_form  = Board_create_form()
+    board = Board.query.filter_by(id=board_id).first()
+    if not (session['user_id'] == board.user_id or session['level'] == 99):
+        return redirect(url_for('home'))
+    ret = {
+            'navbar_menus': navbar_menus,
+            'selected_navbar_index': navbar_menus.BOARD,
+            'board_create_form': board_create_form,
+            'board': board,
+            }
+    if request.method == 'POST':
+        if not board_create_form.validate_on_submit():
+            return render_template('board_create',ret=ret)
+
+        board.title               = board_create_form.title.data
+        board.board_category_id   = request.form.get('category')
+        board.body                = request.form['board_body'].strip()
+        db.session.commit()
+
+        return redirect(url_for('board_detail',board_id=board_id))
+    elif request.method == 'GET':
+        return redirect('/')
+    return redirect('/')
+
 ###
 
 ### DELETE 
+@app.route('/delete_comment/<int:comment_id>',methods=['POST'])
+@login_required
+def delete_comment(comment_id):
+    comment = Board_comment.query.filter_by(id=comment_id).first()
+    db.session.delete(comment)
+    db.session.commit()
+    return json.dumps({'message': 'delete success'})
+
+@app.route('/delete_board/<int:board_id>',methods=['POST'])
+@login_required
+def delete_board(board_id):
+    board = Board.query.filter_by(id=board_id).first()
+    comments = Board_comment.query.filter_by(board_id=board.id).all()
+    for comment in comments:
+        db.session.delete(comment)
+        db.session.commit()
+    db.session.delete(board)
+    db.session.commit()
+    return json.dumps({'message': 'delete success'})
 ###
 
 
@@ -288,6 +335,24 @@ def board_create():
             'board_create_form': board_create_form,
             }
     return render_template('board_create.html',ret=ret)
+
+@app.route('/board_update/<int:board_id>')
+@login_required
+def board_update(board_id):
+    with app.app_context():
+        board_create_form = Board_create_form()
+    board = Board.query.filter_by(id=board_id).first()
+    if not (session['user_id'] == board.user_id or session['level'] == 99):
+        return redirect(url_for('home'))
+    board_create_form.title.data = board.title
+    ret = {
+            'navbar_menus': navbar_menus,
+            'selected_navbar_index': navbar_menus.BOARD,
+            'board_create_form': board_create_form,
+            'board': board,
+            }
+    return render_template('board_update.html',ret=ret)
+
 
 
 @app.route('/login')

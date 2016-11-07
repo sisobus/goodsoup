@@ -26,14 +26,19 @@
 <div class="container-fluid cart-list">
     <div class="row">
         <div class="col-sm-9 blog-content">
+            {{ ret.pagination.info }}
+
             <table class="table table-striped table-bordered">
                 <thead >
                     <tr>
                         <th style="5%;text-align:center;" >
                             No
                         </th>
-                        <th style="width:60%;text-align:center;">
+                        <th style="width:45%;text-align:center;">
                             제목
+                        </th>
+                        <th style="width:15%;text-align:center;">
+                            카테고리
                         </th>
                         <th style="width:14%;text-align:center;">
                             글쓴이
@@ -58,6 +63,11 @@
                         </a>
                     </td>
                     <td style="text-align:center;">
+                        <a href="/board/{{notice.board_category_id}}">
+                            {{ notice.board_category_name }}
+                        </a>
+                    </td>
+                    <td style="text-align:center;">
                         {{ notice.user.username }}
                     </td>
                     <td style="text-align:center;">
@@ -79,6 +89,11 @@
                         </a>
                     </td>
                     <td style="text-align:center;">
+                        <a href="/board/{{board.board_category_id}}">
+                            {{ board.board_category_name }}
+                        </a>
+                    </td>
+                    <td style="text-align:center;">
                         {{ board.user.username }}
                     </td>
                     <td style="text-align:center;">
@@ -96,10 +111,18 @@
                     <button type="submit" class="btn" style="margin:0;">글쓰기</button>
                 </a>
             </div>
+            <center>
+                {{ ret.pagination.links }}
+            </center>
         </div>
         <div class="col-sm-3 blog-sidebar">
             {% include "board_category.html" %}
         </div>
     </div>
 </div>
+<script>
+$(document).ready(function() {
+     $('.pagination ul').addClass('pagination');
+});
+</script>
 {% endblock %}
