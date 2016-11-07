@@ -61,3 +61,24 @@ class Signin_form(Form):
             self.email.errors.append(u'이메일 혹은 비밀번호가 틀렸습니다.')
             return False
 
+class Board_create_form(Form):
+    title       = TextField('title', [validators.Required(u'글 제목을 써주세요')])
+
+    def __init__(self, *args, **kargs):
+        Form.__init__(self, *args, **kargs)
+
+    def validate(self):
+        if not Form.validate(self):
+            return False
+        return True
+
+class Comment_create_form(Form):
+    body        = TextAreaField('comment', [validators.Required(u'댓글을 써주세요')])
+
+    def __init__(self, *args, **kargs):
+        Form.__init__(self, *args, **kargs)
+
+    def validate(self):
+        if not Form.validate(self):
+            return False
+        return True

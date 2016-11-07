@@ -49,6 +49,8 @@ from models import (
 from forms import (
         Signup_form,
         Signin_form,
+        Board_create_form,
+        Comment_create_form,
         )
 
 db.init_app(app)
@@ -77,11 +79,128 @@ def address():
 
 navbar_menus = utils.enum('HOME','SOUP','ABOUT','BOARD','LOGIN','CART')
 
-@app.route('/test_user_db/<int:user_id>')
-def test_user_db(user_id):
-    user = User.query.filter_by(id=user_id).first()
-    return jsonify(results={})
 
+### CREATE
+@app.route('/save_board',methods=['POST'])
+@login_required
+def save_board():
+    with app.app_context():
+        board_create_form  = Board_create_form()
+    ret = {
+            'navbar_menus': navbar_menus,
+            'selected_navbar_index': navbar_menus.BOARD,
+            'board_create_form': board_create_form,
+            }
+    if request.method == 'POST':
+        if not board_create_form.validate_on_submit():
+            return render_template('board_create',ret=ret)
+        title               = board_create_form.title.data
+        user_id             = session['user_id']
+        board_category_id   = request.form.get('category')
+        body                = request.form['board_body'].strip()
+        new_board           = Board(title,body,user_id,board_category_id)
+        db.session.add(new_board)
+        db.session.commit()
+
+        board_id = new_board.id
+        return redirect(url_for('board_detail',board_id=board_id))
+    elif request.method == 'GET':
+        return redirect('/')
+    return redirect('/')
+
+@app.route('/save_comment/<int:board_id>',methods=['POST'])
+@login_required
+def save_comment(board_id):
+    with app.app_context():
+        comment_create_form = Comment_create_form()
+    ret = {
+            'navbar_menus': navbar_menus,
+            'selected_navbar_index': navbar_menus.BOARD,
+            'comment_create_form': comment_create_form,
+            }
+    if request.method == 'POST':
+        body    = comment_create_form.body.data
+        board_id= board_id
+        user_id = session['user_id']
+        new_comment = Board_comment(body,board_id,user_id)
+        db.session.add(new_comment)
+        db.session.commit()
+        return redirect(url_for('board_detail',board_id=board_id))
+
+    elif request.method == 'GET':
+        return redirect('/')
+    return redirect('/')
+
+
+###
+
+### READ 
+def get_board_categories():
+    board_categories = Board_category.query.order_by(Board_category.id.asc())
+    ret = {}
+    for board_category in board_categories:
+        ret[int(board_category.id)] = str(board_category.category_name)
+    return ret
+
+def get_board_information(boards):
+    ret = []
+    for board in boards:
+        user = User.query.filter_by(id=board.user_id).first()
+        number_of_comments = Board_comment.query.filter_by(board_id=board.id).count()
+        d = {
+            'id': board.id,
+            'title': board.title,
+            'body': board.body,
+            'created_at': board.created_at,
+            'user_id': board.user_id,
+            'user': user,
+            'board_category_id': board.board_category_id,
+            'board_category_name': get_board_categories()[int(board.board_category_id)],
+            'number_of_comments': number_of_comments,
+            }
+        ret.append(d)
+    return ret
+
+def get_board_by_board_id(board_id):
+    board = Board.query.filter_by(id=board_id).first()
+    user = User.query.filter_by(id=board.user_id).first()
+    ret = {
+        'id': board.id,
+        'title': board.title,
+        'body': board.body,
+        'created_at': board.created_at,
+        'user_id': board.user_id,
+        'user': user,
+        'board_category_id': board.board_category_id,
+        'board_category_name': get_board_categories()[int(board.board_category_id)],
+            }
+    return ret
+
+def get_comments_by_board_id(board_id):
+    comments = Board_comment.query.filter_by(board_id=board_id).order_by(Board_comment.created_at.asc())
+    ret = []
+    for comment in comments:
+        user = User.query.filter_by(id=comment.user_id).first()
+        d = {
+            'id': comment.id,
+            'body': comment.body,
+            'created_at': comment.created_at,
+            'board_id': comment.board_id,
+            'user_id': comment.user_id,
+            'user': user,
+                }
+        ret.append(d)
+    return ret
+###
+
+### UPDATE 
+###
+
+### DELETE 
+###
+
+
+### VIEW
 @app.route('/')
 def home():
     ret = {
@@ -106,21 +225,70 @@ def about():
             }
     return render_template('about.html',ret=ret)
 
-@app.route('/board')
-def board():
+@app.route('/board/<int:category_id>')
+def board(category_id):
+    search = False
+    per_page = 20
+    q = request.args.get('q')
+    if q:
+        search = True
+    try:
+        page = int(request.args.get('page',1))
+    except ValueError:
+        page = 1
+
+    if category_id == 0:
+        boards = Board.query.order_by(Board.created_at.desc()).limit(per_page).offset((page-1)*per_page)
+        total_count = Board.query.count()
+    else :
+        boards = Board.query.filter_by(board_category_id=category_id).order_by(Board.created_at.desc()).limit(per_page).offset((page-1)*per_page)
+        total_count = Board.query.filter_by(board_category_id=category_id).count()
+    pagination = Pagination(page=page, total=total_count, search=search, record_name='board', per_page=per_page)
+    boards = get_board_information(boards)
+
+    if category_id != 1:
+        notices = Board.query.filter_by(board_category_id=1).order_by(Board.created_at.desc()).all()
+        notices = get_board_information(notices)
+    else :
+        notices = []
+
     ret = {
             'navbar_menus': navbar_menus,
             'selected_navbar_index': navbar_menus.BOARD,
+            'boards': boards,
+            'notices': notices,
+            'pagination': pagination
             }
     return render_template('board.html',ret=ret)
 
+
 @app.route('/board_detail/<int:board_id>')
 def board_detail(board_id):
+    with app.app_context():
+        comment_create_form = Comment_create_form()
+    board = get_board_by_board_id(board_id)
+    comments = get_comments_by_board_id(board_id)
     ret = {
             'navbar_menus': navbar_menus,
             'selected_navbar_index': navbar_menus.BOARD,
+            'board': board,
+            'comment_create_form': comment_create_form,
+            'comments': comments,
             }
     return render_template('board_detail.html',ret=ret)
+
+@app.route('/board_create')
+@login_required
+def board_create():
+    with app.app_context():
+        board_create_form = Board_create_form()
+    ret = {
+            'navbar_menus': navbar_menus,
+            'selected_navbar_index': navbar_menus.BOARD,
+            'board_create_form': board_create_form,
+            }
+    return render_template('board_create.html',ret=ret)
+
 
 @app.route('/login')
 def login():
@@ -162,6 +330,7 @@ def signin():
         session['address']  = user.address
         session['tel']      = user.tel
         session['user_id']  = user.id
+        session['level']    = user.level
         session['logged_in']= True
 
         return redirect(url_for('home'))
@@ -202,6 +371,7 @@ def signup():
         session['dong']     = dong
         session['address']  = address
         session['tel']      = tel
+        session['level']    = newuser.level
         session['user_id']  = newuser.id
         session['logged_in']= True
 
@@ -224,6 +394,7 @@ def logout():
     session.pop('tel',None)
     session.pop('user_id',None)
     session.pop('logged_in',None)
+    session.pop('level',None)
 
     return redirect(url_for('home'))
 
@@ -250,6 +421,7 @@ def checkout():
             'selected_navbar_index': navbar_menus.SOUP,
             }
     return render_template('checkout.html',ret=ret)
+###
 
 if __name__ == '__main__':
     reload(sys)

@@ -47,223 +47,58 @@
                     </tr>
                 </thead>
                 <tbody>
+                {% for notice in ret.notices %}
                 <tr class="danger"> 
                     <th scope="row" style="text-align:right;">
-                        1
+                        {{ notice.id }}
                     </th>
                     <td >
-                        <a href="/board_detail/1">
-                            공지사항
+                        <a href="/board_detail/{{notice.id}}">
+                            {{ notice.title }}
                         </a>
                     </td>
                     <td style="text-align:center;">
-                        상근
+                        {{ notice.user.username }}
                     </td>
                     <td style="text-align:center;">
-                        4
+                        {{ notice.number_of_comments }}
                     </td>
                     <td style="text-align:center;">
-                        2016-10-24
+                        {{ notice.created_at.strftime('%Y-%m-%d') }}
                     </td>
                 </tr>
+                {% endfor %}
+                {% for board in ret.boards %}
                 <tr> 
                     <th scope="row" style="text-align:right;">
-                        2
+                        {{ board.id }}
                     </th>
                     <td >
-                        <a href="/board_detail/1">
-                            첫번째 글
+                        <a href="/board_detail/{{board.id}}">
+                            {{ board.title }}
                         </a>
                     </td>
                     <td style="text-align:center;">
-                        상근
+                        {{ board.user.username }}
                     </td>
                     <td style="text-align:center;">
-                        4
+                        {{ board.number_of_comments}}
                     </td>
                     <td style="text-align:center;">
-                        2016-10-24
+                        {{ board.created_at.strftime('%Y-%m-%d')}}
                     </td>
                 </tr>
-                <tr>
-                    <th scope="row" style="text-align:right;">
-                        1
-                    </th>
-                    <td >
-                        <a href="/board_detail/1">
-                            공지사항
-                        </a>
-                    </td>
-                    <td style="text-align:center;">
-                        상근
-                    </td>
-                    <td style="text-align:center;">
-                        4
-                    </td>
-                    <td style="text-align:center;">
-                        2016-10-24
-                    </td>
-                </tr>
-
-                <tr>
-                    <th scope="row" style="text-align:right;">
-                        1
-                    </th>
-                    <td >
-                        <a href="/board_detail/1">
-                            공지사항
-                        </a>
-                    </td>
-                    <td style="text-align:center;">
-                        상근
-                    </td>
-                    <td style="text-align:center;">
-                        4
-                    </td>
-                    <td style="text-align:center;">
-                        2016-10-24
-                    </td>
-                </tr>
-
-                <tr>
-                    <th scope="row" style="text-align:right;">
-                        1
-                    </th>
-                    <td >
-                        <a href="/board_detail/1">
-                            공지사항
-                        </a>
-                    </td>
-                    <td style="text-align:center;">
-                        상근
-                    </td>
-                    <td style="text-align:center;">
-                        4
-                    </td>
-                    <td style="text-align:center;">
-                        2016-10-24
-                    </td>
-                </tr>
-
-                <tr>
-                    <th scope="row" style="text-align:right;">
-                        1
-                    </th>
-                    <td >
-                        <a href="/board_detail/1">
-                            공지사항
-                        </a>
-                    </td>
-                    <td style="text-align:center;">
-                        상근
-                    </td>
-                    <td style="text-align:center;">
-                        4
-                    </td>
-                    <td style="text-align:center;">
-                        2016-10-24
-                    </td>
-                </tr>
-
-                <tr>
-                    <th scope="row" style="text-align:right;">
-                        1
-                    </th>
-                    <td >
-                        <a href="/board_detail/1">
-                            공지사항
-                        </a>
-                    </td>
-                    <td style="text-align:center;">
-                        상근
-                    </td>
-                    <td style="text-align:center;">
-                        4
-                    </td>
-                    <td style="text-align:center;">
-                        2016-10-24
-                    </td>
-                </tr>
-
-                <tr>
-                    <th scope="row" style="text-align:right;">
-                        1
-                    </th>
-                    <td >
-                        <a href="/board_detail/1">
-                            공지사항
-                        </a>
-                    </td>
-                    <td style="text-align:center;">
-                        상근
-                    </td>
-                    <td style="text-align:center;">
-                        4
-                    </td>
-                    <td style="text-align:center;">
-                        2016-10-24
-                    </td>
-                </tr>
-
-                <tr>
-                    <th scope="row" style="text-align:right;">
-                        1
-                    </th>
-                    <td >
-                        <a href="/board_detail/1">
-                            공지사항
-                        </a>
-                    </td>
-                    <td style="text-align:center;">
-                        상근
-                    </td>
-                    <td style="text-align:center;">
-                        4
-                    </td>
-                    <td style="text-align:center;">
-                        2016-10-24
-                    </td>
-                </tr>
-
-                <tr>
-                    <th scope="row" style="text-align:right;">
-                        1
-                    </th>
-                    <td >
-                        <a href="/board_detail/1">
-                            공지사항
-                        </a>
-                    </td>
-                    <td style="text-align:center;">
-                        상근
-                    </td>
-                    <td style="text-align:center;">
-                        4
-                    </td>
-                    <td style="text-align:center;">
-                        2016-10-24
-                    </td>
-                </tr>
+                {% endfor %}
                 </tbody>
             </table>
+            <div class="pull-right">
+                <a href="/board_create">
+                    <button type="submit" class="btn" style="margin:0;">글쓰기</button>
+                </a>
+            </div>
         </div>
         <div class="col-sm-3 blog-sidebar">
-            <div class="widget">
-                <h3>착한 탕국 배너</h3>
-                <p>
-                    설명 혹은 광고? 
-                </p>
-                <hr>
-            </div>
-            <div class="widget">
-                <h3>카테고리</h3>
-                <ul class="nav" style="padding-left:0;">
-                    <li style="border-bottom:1px solid #eeeeee;"><a href="/board"><i class="fa fa-book"></i> &nbsp;전체글보기</a></li>
-                    <li style="border-bottom:1px solid #eeeeee;"><a href="#"><i class="fa fa-exclamation"></i> &nbsp;&nbsp;&nbsp;공지사항</a></li>
-                    <li><a href="#"><i class="fa fa-question"></i> &nbsp;&nbsp;&nbsp;질문/답변</a></li>
-                </ul>
-                <hr>
-            </div>
+            {% include "board_category.html" %}
         </div>
     </div>
 </div>

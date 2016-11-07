@@ -18,8 +18,9 @@ class User(db.Model):
     dong            = db.Column(db.String(100))
     address         = db.Column(db.String(300))
     tel             = db.Column(db.String(200))
+    level           = db.Column(db.Integer)
 
-    def __init__(self, username, email, password, si, gu, dong, address, tel):
+    def __init__(self, username, email, password, si, gu, dong, address, tel, level=0):
         self.username   = username
         self.email      = email
         self.set_password(password)
@@ -29,6 +30,7 @@ class User(db.Model):
         self.dong       = dong
         self.address    = address
         self.tel        = tel
+        self.level      = level
 
     def set_password(self, password):
         self.password   = generate_password_hash(password)
