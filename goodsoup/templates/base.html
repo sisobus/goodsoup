@@ -40,8 +40,17 @@
                         <a href="/board">게시판</a>
                     </li>
                     <li {% if ret.navbar_menus.LOGIN == ret.selected_navbar_index %}class="active"{% endif %}>
+                        {% if 'logged_in' in session %}
+                        <a href="/#">{{session['username']}}님 환영합니다</a>
+                        {% else %}
                         <a href="/login">회원가입/로그인</a>
+                        {% endif %}
                     </li>
+                    {% if 'logged_in' in session %}
+                    <li>
+                        <a href="/logout">로그아웃</a>
+                    </li>
+                    {% endif %}
                 </ul>
                 <div class="visible-xs mt-info">
                     <h3>More</h3>

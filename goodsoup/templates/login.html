@@ -4,6 +4,9 @@
 #gu-col {
     padding: 0px 10px 0px 10px;
 }
+#address {
+    margin-top: 15px;
+}
 @media screen and (max-width: 767px) {
     #gu-col {
         padding: 0;
@@ -16,23 +19,28 @@
 <div class="container-fluid cart-list">
     <div class="row">
         <div class="col-sm-6">
-            <form action="#" method="post" novalidate  class="myform">
-
+            <form action="/signin" method="post" novalidate  class="myform">
+                {{ ret.signin_form.hidden_tag() }}
                 <h2 class="text-center">로그인</h2>
-                <!-- <h3 class="text-center">Login to shop</h3> -->
 
                 <div class="form-group">
                     <label class="control-label">이메일</label>
-                    <input name="email" placeholder="이메일" class="form-control" type="text">
+                    {% for message in ret.signin_form.email.errors %}
+                    <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                    {{ ret.signin_form.email(placeholder="이메일",class="form-control") }}
                 </div>
                 <div class="form-group">
                     <label class="control-label">비밀번호</label>
-                    <input name="Password" placeholder="비밀번호" class="form-control" type="text">
+                    {% for message in ret.signin_form.password.errors %}
+                    <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                    {{ ret.signin_form.password(placeholder="비밀번호",class="form-control") }}
                 </div>
 
                 <div class="checkbox">
                     <label>
-                        <input type="checkbox">
+                        {{ ret.signin_form.auto_login }}
                         <span>Remember Me</span>
                     </label>
                 </div>
@@ -48,45 +56,58 @@
             </form>
         </div>
         <div class="col-sm-6">
-            <form action="#" method="post" novalidate class="myform">
+            <form action="/signup" method="post" novalidate class="myform">
+                {{ ret.signup_form.hidden_tag() }}
                 <h2 class="text-center">회원가입</h2>
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label class="control-label">이름</label>
-                            <input name="name" placeholder="이름" class="form-control" type="text">
+                            {% for message in ret.signup_form.username.errors %}
+                            <div class="flash">{{ message }}</div>
+                            {% endfor %}
+                            {{ret.signup_form.username(placeholder="이름",class="form-control")}}
                         </div>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="control-label">이메일</label>
-                    <input name="email" placeholder="이메일" class="form-control" type="text">
+                    {% for message in ret.signup_form.email.errors %}
+                    <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                    {{ ret.signup_form.email(placeholder="이메일", class="form-control") }}
                 </div>
                 <div class="form-group">
                     <label class="control-label">비밀번호</label>
-                    <input name="Password" placeholder="비밀번호" class="form-control" type="text">
+                    {% for message in ret.signup_form.password.errors %}
+                    <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                    {{ ret.signup_form.password(placeholder="비밀번호", class="form-control") }}
                 </div>
                 <div class="form-group">
                     <label class="control-label">비밀번호 확인</label>
-                    <input name="Password_check" placeholder="비밀번호 확인" class="form-control" type="text">
+                    {% for message in ret.signup_form.password_check.errors %}
+                    <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                    {{ ret.signup_form.password_check(placeholder="비밀번호 확인", class="form-control") }}
                 </div>
                 <div class="form-group">
                     <div class="local-search" id="local-search">
                         <div class="company-item-region" id="sigudong-search" >
                             <div class="item_box item-region on">
                                 <div class="col-sm-4" style="padding:0;">
-                                    <select id="si" class="form-control" tabindex="9">
+                                    <select id="si" name="si" class="form-control" tabindex="9">
                                         <option>서울시</option>
                                     </select>
                                 </div>
                                 <div class="col-sm-4" id="gu-col">
-                                    <select id="gu" class="form-control" tabindex="9">
+                                    <select id="gu" name="gu" class="form-control" tabindex="9">
                                         <option>전체</option>
                                     </select>
                                 </div>
                                 <div class="col-sm-4" style="padding:0;">
-                                    <select id="dong" class="form-control" tabindex="9" >
+                                    <select id="dong" name="dong" class="form-control" tabindex="9" >
                                         <option>전체</option>
                                     </select>
                                 </div>
@@ -96,11 +117,17 @@
                 </div>
                 <div class="form-group">
                     <label class="control-label">나머지 주소</label>
-                    <input name="address" placeholder="나머지 주소" class="form-control" type="text" style="margin-top:15px;">
+                    {% for message in ret.signup_form.address.errors %}
+                    <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                    {{ ret.signup_form.address(placeholder="나머지 주소" ,class="form-control") }}
                 </div>
                 <div class="form-group">
                     <label class="control-label">연락처</label>
-                    <input name="phone" placeholder="연락처" class="form-control" type="text">
+                    {% for message in ret.signup_form.tel.errors %}
+                    <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                    {{ ret.signup_form.tel(placeholder="연락처(XXX-XXXX-XXXX형식으로 입력)", class="form-control") }}
                 </div>
 
                 <p><button name="submit" type="submit" class="btn btn-store btn-block">회원가입</button></p>
