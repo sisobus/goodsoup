@@ -82,3 +82,19 @@ class Comment_create_form(Form):
         if not Form.validate(self):
             return False
         return True
+
+class Soup_create_form(Form):
+    name            = TextField('name', [validators.Required(u'메뉴명을 써주세요')])
+    price           = TextField('price', [validators.Required(u'가격을 써주세요'),validators.Regexp(r'^[0-9]*$')])
+    discounted_price= TextField('discounted_price', [validators.Required(u'할인가를 써주세요'),validators.Regexp(r'^[0-9]*$')])
+    description     = TextAreaField('description', [validators.Required(u'메뉴 설명을 해주세요')])
+    amount          = TextField('amount',[validators.Required(u'한정수량을 써주세요'),validators.Regexp(r'^[0-9]*$')])
+    is_special      = BooleanField('is_special')
+
+    def __init__(self, *args, **kargs):
+        Form.__init__(self, *args, **kargs)
+
+    def validate(self):
+        if not Form.validate(self):
+            return False
+        return True

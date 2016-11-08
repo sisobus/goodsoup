@@ -66,6 +66,20 @@ class Image(db.Model):
         self.created_at = datetime.now()
         self.user_id    = user_id
 
+class Soup_image(db.Model):
+    __tablename__   = 'soup_image'
+    id              = db.Column(db.Integer, primary_key=True)
+    image_path      = db.Column(db.String(1024))
+    created_at      = db.Column(db.DateTime)
+    soup_id         = db.Column(db.Integer, db.ForeignKey('soup.id'))
+    user_id         = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    def __init__(self, image_path, soup_id, user_id):
+        self.image_path = image_path
+        self.created_at = datetime.now()
+        self.soup_id    = soup_id
+        self.user_id    = user_id
+
 class Soup(db.Model):
     __tablename__   = 'soup'
     id              = db.Column(db.Integer, primary_key=True)
@@ -76,7 +90,7 @@ class Soup(db.Model):
     amount          = db.Column(db.Integer)
     is_special      = db.Column(db.SmallInteger)
     
-    def __init__(self, name, price, discounted_price, description, amout=9999, is_special=0):
+    def __init__(self, name, price, discounted_price, description, amount=9999, is_special=0):
         self.name               = name
         self.price              = price
         self.discounted_price   = discounted_price

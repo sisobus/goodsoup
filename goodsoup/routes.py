@@ -45,12 +45,14 @@ from models import (
         Board_comment,
         Payment,
         Payment_has_soup,
+        Soup_image,
         )
 from forms import (
         Signup_form,
         Signin_form,
         Board_create_form,
         Comment_create_form,
+        Soup_create_form,
         )
 
 db.init_app(app)
@@ -131,7 +133,67 @@ def save_comment(board_id):
         return redirect('/')
     return redirect('/')
 
+@app.route('/save_soup_image',methods=['POST'])
+@login_required
+def save_soup_image():
+    if request.method == 'POST':
+        if request.files:
+            files = request.files
+            for file_key in files:
+                file = request.files[file_key]
+                filename = secure_filename(file.filename)
+                directory_name = utils.convert_email_to_directory_name(session['email'])
+                directory_url = os.path.join(app.config['UPLOAD_FOLDER'],directory_name)
+                utils.createDirectory(directory_url)
+                file_path = os.path.join(directory_url,filename.split('.')[0]+'-'+str(datetime.now()).replace(' ','-')+'.'+filename.split('.')[-1])
+                file.save(file_path)
+                new_soup_image = Soup_image(file_path,1,session['user_id'])
+                db.session.add(new_soup_image)
+                db.session.commit()
+                return json.dumps({'message': 'upload success'})
+        return json.dumps({'message':'error'})
+    return json.dumps({'message': 'upload success'})
 
+@app.route('/save_soup',methods=['POST'])
+def save_soup():
+    with app.app_context():
+        soup_create_form = Soup_create_form()
+
+    ret = {
+            'navbar_menus': navbar_menus,
+            'selected_navbar_index': navbar_menus.SOUP,
+            'soup_create_form': soup_create_form,
+            }
+
+    if request.method == 'POST':
+        if not soup_create_form.validate():
+            soup_images = Soup_image.query.filter_by(soup_id=1).all()
+            for soup_image in soup_images:
+                db.session.delete(soup_image)
+                db.session.commit()
+            return render_template('soup_create.html',ret=ret)
+        name                = soup_create_form.name.data
+        price               = int(soup_create_form.price.data.replace(',',''))
+        discounted_price    = int(soup_create_form.discounted_price.data.replace(',',''))
+        description         = soup_create_form.description.data
+        amount              = int(soup_create_form.amount.data.replace(',',''))
+        is_special          = soup_create_form.is_special.data
+        if is_special:
+            t = 1
+        else :
+            t = 0
+        new_soup            = Soup(name,price,discounted_price,description,amount,t)
+        db.session.add(new_soup)
+        db.session.commit()
+        soup_id             = new_soup.id
+        soup_images         = Soup_image.query.filter_by(soup_id=1).all()
+        for soup_image in soup_images:
+            soup_image.soup_id  = soup_id
+            db.session.commit()
+        return redirect(url_for('soup_detail',soup_id=soup_id))
+    elif request.method == 'GET':
+        return redirect('/')
+    return redirect('/')
 ###
 
 ### READ 
@@ -244,6 +306,19 @@ def delete_board(board_id):
     db.session.delete(board)
     db.session.commit()
     return json.dumps({'message': 'delete success'})
+
+@app.route('/delete_image',methods=['POST'])
+@login_required
+def delete_image():
+    if request.method == 'POST':
+        filename = request.form.get('id')
+        filename = secure_filename(filename)
+        print filename
+        only_filename = filename.split('.')[0]
+        soup_image = Soup_image.query.filter(Soup_image.image_path.like('%'+only_filename+'%')).order_by(Soup_image.created_at.desc()).first()
+        db.session.delete(soup_image)
+        db.session.commit()
+    return json.dumps({'message': 'delete success'})
 ###
 
 
@@ -263,6 +338,27 @@ def soup():
             'selected_navbar_index': navbar_menus.SOUP,
             }
     return render_template('soup.html',ret=ret)
+
+@app.route('/soup_detail/<int:soup_id>')
+def soup_detail(soup_id):
+    ret = {
+            'navbar_menus': navbar_menus,
+            'selected_navbar_index': navbar_menus.SOUP,
+            }
+    return render_template('soup_detail.html',ret=ret)
+
+@app.route('/soup_create')
+@login_required
+def soup_create():
+    with app.app_context():
+        soup_create_form = Soup_create_form()
+    ret = {
+            'navbar_menus': navbar_menus,
+            'selected_navbar_index': navbar_menus.SOUP,
+            'soup_create_form': soup_create_form,
+            }
+    return render_template('soup_create.html',ret=ret)
+
 
 @app.route('/about')
 def about():
@@ -470,14 +566,6 @@ def cart():
             'selected_navbar_index': navbar_menus.CART,
             }
     return render_template('cart.html',ret=ret)
-
-@app.route('/soup_detail/<int:soup_id>')
-def soup_detail(soup_id):
-    ret = {
-            'navbar_menus': navbar_menus,
-            'selected_navbar_index': navbar_menus.SOUP,
-            }
-    return render_template('soup_detail.html',ret=ret)
 
 @app.route('/checkout')
 def checkout():

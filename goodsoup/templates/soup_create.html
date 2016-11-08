@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+.price-won {
+    font-size: 20px;
+}
+</style>
+<div class="container-fluid hidden-xs">
+    <div class="row">
+        <ol class="breadcrumb">
+            <li><a href="/soup">국</a></li>
+            <li class="active">메뉴 추가</li>
+        </ol>
+    </div>
+</div>
+<div class="container-fluid product">
+    <div class="row visible-xs product-mobile">
+        <div class="col-xs-12 text-center">
+            <h2 class="product-title">메뉴 추가</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-8 ">
+            <form action="/save_soup_image" method="post" class="dropzone" id="myDropzone" enctype="multipart/form-data"  style="border:4px dashed #dddddd;height:400px;">
+                <div class="dz-message" data-dz-message style="margin:0;margin-top:100px;">
+                    <img src="{{url_for('static',filename='images/cloud-upload-2-128x128.png')}}" style="border:0;"><br>
+                    <span style="color:#cccccc;font-size:15px;"> 사진을 이 곳으로 드래그하세요. </span>
+                    <br>
+                    <span style="color:red;font-size:15px;"> 한글 파일명은 쓸 수 없습니다.</span>
+                </div>
+                <div id='uploadme' class="fallback">
+                    <input name="file" type="file" multiple/>
+                </div>
+            </form>
+        </div>
+        <div class="col-sm-4">
+            <form action="/save_soup" method="post" class="myform" enctype="multipart/form-data">
+                {{ ret.soup_create_form.hidden_tag() }}
+                <div class="form-group">
+                    <label class="control-label">메뉴 이름</label>
+                    {% for message in ret.soup_create_form.name.errors %}
+                    <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                    {{ ret.soup_create_form.name(placeholder="메뉴 이름",class="form-control") }}
+                </div>
+                <div class="form-group">
+                    <label class="control-label">가격</label>
+                    {% for message in ret.soup_create_form.price.errors %}
+                    <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                    {{ ret.soup_create_form.price(placeholder="메뉴 가격(숫자만 써주세요)",class="form-control") }}
+                </div>
+                <div class="form-group">
+                    <label class="control-label">할인가</label>
+                    {% for message in ret.soup_create_form.discounted_price.errors %}
+                    <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                    {{ ret.soup_create_form.discounted_price(placeholder="할인 가격(숫자만 써주세요)",class="form-control") }}
+                </div>
+                <div class="form-group">
+                    <label class="control-label">메뉴 설명</label>
+                    {% for message in ret.soup_create_form.description.errors %}
+                    <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                    {{ ret.soup_create_form.description(placeholder="메뉴 설명",class="form-control") }}
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">수량</label>
+                    {% for message in ret.soup_create_form.amount.errors %}
+                    <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                    {{ ret.soup_create_form.amount(placeholder="한정 수량(숫자만 써주세요)",class="form-control") }}
+                </div>
+                <div class=" checkbox">
+                    <label >
+                    {{ ret.soup_create_form.is_special }}
+                    <span> 스페셜 메뉴인가? </span>
+                </label>
+                </div>
+                <button type="submit" class="btn">
+                    메뉴 등록
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+$(document).ready(function() {
+    Dropzone.options.myDropzone = {
+        addRemoveLinks: true,
+        removedfile: function(file) {
+            var name = file.name;
+            $.ajax({
+                type:'POST',
+                url: '/delete_image',
+                data: "id="+name,
+                dataType: 'html'
+            });
+            var _ref;
+            return (_ref = file.previewElement) != null ? _ref.parentNode.removeChild(file.previewElement) : void 0;        
+        }
+    }
+});
+</script>
+
+{% endblock %}
