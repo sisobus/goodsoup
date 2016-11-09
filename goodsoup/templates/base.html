@@ -43,18 +43,20 @@
                     <li {% if ret.navbar_menus.BOARD == ret.selected_navbar_index %}class="active"{% endif %}>
                         <a href="/board/0">게시판</a>
                     </li>
-                    <li {% if ret.navbar_menus.LOGIN == ret.selected_navbar_index %}class="active"{% endif %}>
-                        {% if 'logged_in' in session %}
-                        <a href="/#">{{session['username']}}님 환영합니다</a>
-                        {% else %}
-                        <a href="/login">회원가입/로그인</a>
-                        {% endif %}
+                    <li {% if ret.navbar_menus.STORE == ret.selected_navbar_index %}class="active"{% endif %}>
+                        <a href="/store">매장안내</a>
                     </li>
-                    {% if 'logged_in' in session %}
-                    <li>
-                        <a href="/logout">로그아웃</a>
+                    {% if not 'logged_in' in session %}
+                    <li {% if ret.navbar_menus.LOGIN == ret.selected_navbar_index %}class="active"{% endif %}>
+                    <a href="/login">회원가입/로그인</a>
                     </li>
                     {% endif %}
+                    {% if 'logged_in' in session %}
+                    <li>
+                    <a href="/logout">{{session['username']}}님/로그아웃</a>
+                    </li>
+                    {% endif %}
+                </div>
                 </ul>
                 <!--
                 <div class="visible-xs mt-info">
@@ -72,10 +74,15 @@
             <div id="main-nav" class="">
                 <div class="container-fluid">
                     <div class="nav-header">
-                        <a href="/" class="nav-brand" style="border:0;">착한<span>탕국</span></a>
+
+                        <a href="/" class="nav-brand" style="border:0;">
+                            착한<span>탕국</span>
+                    <h5 class="hidden-xs" style="font-size:14px;font-weight:bold;">국 포장 전문 배달점</h5>
+                        </a>
                         <a class="nav-icon pull-right visible-xs menu-link" href="#"><i class="icon-menu2"></i></a>
                         <a class="nav-icon-outline cart pull-right" href="/cart"><i class="icon-cart"></i><span class="badge">3</span></a>
                     </div>
+
                 </div>
             </div>
             {% block content %}

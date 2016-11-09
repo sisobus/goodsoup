@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+.store-info {
+    font-size:15px;
+    padding-bottom: 20px;
+}
+.store-info-name {
+    font-size: 18px;
+    font-weight: bold;
+}
+.store-info-location {
+}
+.store-info-tel {
+}
+.store-info-time {
+}
+</style>
+<div class="container-fluid title">
+    <div class="row">
+        <div class="col-sm-12">
+            <h2>매장안내</h2>
+        </div>
+    </div>
+</div>
+<div class="container-fluid cart-list">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="store-info">
+                <div class="store-info-name">
+                    착한탕국 정자점
+                </div>
+                <div class="store-info-location">
+                    경기도 수원시 장안구 정자동 111-21
+                </div>
+                <div class="store-info-tel">
+                    032-1234-1234
+                </div>
+                <div class="store-info-time">
+                    월-금: 9:00 ~ 22:00, 토: 10:00 ~ 21:00
+                </div>
+                <button class="btn btn-store" style="margin-top:10px;padding-bottom:20px;line-height:30px;height:33px;">
+                    지도 보기
+                </button>
+            </div>
+
+            <div class="store-info">
+                <div class="store-info-name">
+                    착한탕국 정자점
+                </div>
+                <div class="store-info-location">
+                    경기도 수원시 장안구 정자동 111-21
+                </div>
+                <div class="store-info-tel">
+                    032-1234-1234
+                </div>
+                <div class="store-info-time">
+                    월-금: 9:00 ~ 22:00, 토: 10:00 ~ 21:00
+                </div>
+                <button class="btn btn-store" style="margin-top:10px;padding-bottom:20px;line-height:30px;height:33px;">
+                    지도 보기
+                </button>
+            </div>
+
+            <div class="store-info">
+                <div class="store-info-name">
+                    착한탕국 정자점
+                </div>
+                <div class="store-info-location">
+                    경기도 수원시 장안구 정자동 111-21
+                </div>
+                <div class="store-info-tel">
+                    032-1234-1234
+                </div>
+                <div class="store-info-time">
+                    월-금: 9:00 ~ 22:00, 토: 10:00 ~ 21:00
+                </div>
+                <button class="btn btn-store" style="margin-top:10px;padding-bottom:20px;line-height:30px;height:33px;">
+                    지도 보기
+                </button>
+            </div>
+
+            <div class="store-info">
+                <div class="store-info-name">
+                    착한탕국 정자점
+                </div>
+                <div class="store-info-location">
+                    경기도 수원시 장안구 정자동 111-21
+                </div>
+                <div class="store-info-tel">
+                    032-1234-1234
+                </div>
+                <div class="store-info-time">
+                    월-금: 9:00 ~ 22:00, 토: 10:00 ~ 21:00
+                </div>
+                <button class="btn btn-store" style="margin-top:10px;padding-bottom:20px;line-height:30px;height:33px;">
+                    지도 보기
+                </button>
+            </div>
+
+            <div class="store-info">
+                <div class="store-info-name">
+                    착한탕국 정자점
+                </div>
+                <div class="store-info-location">
+                    경기도 수원시 장안구 정자동 111-21
+                </div>
+                <div class="store-info-tel">
+                    032-1234-1234
+                </div>
+                <div class="store-info-time">
+                    월-금: 9:00 ~ 22:00, 토: 10:00 ~ 21:00
+                </div>
+                <button class="btn btn-store" style="margin-top:10px;padding-bottom:20px;line-height:30px;height:33px;">
+                    지도 보기
+                </button>
+            </div>
+
+            <div class="store-info">
+                <div class="store-info-name">
+                    착한탕국 정자점
+                </div>
+                <div class="store-info-location">
+                    경기도 수원시 장안구 정자동 111-21
+                </div>
+                <div class="store-info-tel">
+                    032-1234-1234
+                </div>
+                <div class="store-info-time">
+                    월-금: 9:00 ~ 22:00, 토: 10:00 ~ 21:00
+                </div>
+                <button class="btn btn-store" style="margin-top:10px;padding-bottom:20px;line-height:30px;height:33px;">
+                    지도 보기
+                </button>
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <div id="map" style="width:100%;height:600px;"></div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="//apis.daum.net/maps/maps3.js?apikey=1699db5ea9bef75bbae96d025c65cfe7"></script>
+<script>
+var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+    mapOption = {
+        center: new daum.maps.LatLng(37.29170, 126.99957), // 지도의 중심좌표
+        level: 4, // 지도의 확대 레벨
+        mapTypeId : daum.maps.MapTypeId.ROADMAP // 지도종류
+    }; 
+
+// 지도를 생성한다 
+var map = new daum.maps.Map(mapContainer, mapOption); 
+
+// 지도에 마커를 생성하고 표시한다
+var marker = new daum.maps.Marker({
+    position: new daum.maps.LatLng(37.29170, 126.99957), // 마커의 좌표
+    map: map // 마커를 표시할 지도 객체
+});
+var marker1 = new daum.maps.Marker({
+    position: new daum.maps.LatLng(37.28925, 127.00586), // 마커의 좌표
+    map: map // 마커를 표시할 지도 객체
+});
+
+// 마커 위에 표시할 인포윈도우를 생성한다
+var infowindow = new daum.maps.InfoWindow({
+    content : '<div style="padding:5px;">착한탕국 정자점</span> <br>수원시 장안구 정자동 12-1</div>' // 인포윈도우에 표시할 내용
+});
+var infowindow1 = new daum.maps.InfoWindow({
+    content : '<div style="padding:5px;">착한탕국 정자점</span> <br>수원시 장안구 정자동 12-1</div>' // 인포윈도우에 표시할 내용
+});
+
+// 인포윈도우를 지도에 표시한다
+infowindow.open(map, marker);
+infowindow1.open(map, marker1);
+
+
+</script>
+{% endblock %}

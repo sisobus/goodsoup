@@ -79,7 +79,7 @@ def address():
 # address 
 #
 
-navbar_menus = utils.enum('HOME','SOUP','ABOUT','BOARD','LOGIN','CART')
+navbar_menus = utils.enum('HOME','SOUP','ABOUT','BOARD','STORE','LOGIN','CART')
 
 
 ### CREATE
@@ -558,6 +558,15 @@ def logout():
     session.pop('level',None)
 
     return redirect(url_for('home'))
+
+@app.route('/store')
+def store():
+    ret = {
+            'navbar_menus': navbar_menus,
+            'selected_navbar_index': navbar_menus.STORE,
+            }
+    return render_template('store.html',ret=ret)
+
 
 @app.route('/cart')
 def cart():
