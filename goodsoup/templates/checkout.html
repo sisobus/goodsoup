@@ -89,7 +89,7 @@
                 <tr>
                     <td>가격 :</td>
                     <td></td>
-                    <td class="text-right"><b>{{ret.total_price}}원</b></td>
+                    <td class="text-right"><b>{{'{:,}'.format(ret.total_price)}}원</b></td>
                 </tr>
                 <tr>
                     <td>배송비 :</td>
@@ -105,7 +105,7 @@
                     <td>총 :</td>
                     <td></td>
                     <td id="total" class="text-right">
-                        {{ ret.total_price}}원
+                        {{ '{:,}'.format(ret.total_price)}}원
                     </td>
                 </tr>
                 </tbody>

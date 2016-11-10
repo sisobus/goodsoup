@@ -22,9 +22,9 @@
             <h2 class="product-title">{{ret.soup.name}}</h2>
             <div class="product-price">
                 {% if ret.soup.price != ret.soup.discounted_price %}
-                <span class="price-won">{{ret.soup.discounted_price}}원 <del style="font-size:16px;color:red;"><span style="color:black;">{{ret.soup.price}}원</span></del></span>
+                <span class="price-won">{{'{:,}'.format(ret.soup.discounted_price)}}원 <del style="font-size:16px;color:red;"><span style="color:black;">{{'{:,}'.format(ret.soup.price)}}원</span></del></span>
                 {% elif ret.soup.price == ret.soup.discounted_price %}
-                <span class="price-won">{{ret.soup.price}}원</span>
+                <span class="price-won">{{'{:,}'.format(ret.soup.price)}}원</span>
                 {% endif %}
             </div>
         </div>
@@ -49,9 +49,9 @@
             <h2 class="product-title hidden-xs">{{ret.soup.name}}</h2>
                         <div class="product-price hidden-xs">
                 {% if ret.soup.price != ret.soup.discounted_price %}
-                <span class="price-won">{{ret.soup.discounted_price}}원 <del style="font-size:16px;color:red;"><span style="color:black;">{{ret.soup.price}}원</span></del></span>
+                <span class="price-won">{{'{:,}'.format(ret.soup.discounted_price)}}원 <del style="font-size:16px;color:red;"><span style="color:black;">{{'{:,}'.format(ret.soup.price)}}원</span></del></span>
                 {% elif ret.soup.price == ret.soup.discounted_price %}
-                <span class="price-won">{{ret.soup.price}}원</span>
+                <span class="price-won">{{'{:,}'.format(ret.soup.price)}}원</span>
                 {% endif %}
             </div>
             <div class="product-detail">

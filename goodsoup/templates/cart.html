@@ -25,14 +25,15 @@
                 {% for soup in ret.cur_cart_list %}
                 <tr >
                     <td class="vert-align"><a href="/soup_detail/{{soup.soup_id}}">{{soup.name}}</a></td>
-                    <td class="vert-align" id="price_{{soup.soup_id}}">{{soup.discounted_price}}원</td>
+                    <td class="vert-align" id="price_{{soup.soup_id}}">{{'{:,}'.format(soup.discounted_price)}}원</td>
                     <td class="text-center vert-align"><input id="cnt_{{soup.soup_id}}" type="number" min="1" max="9" class="form-control form-control-inline" style="width: 52px!important;" value="{{soup.soup_cnt}}"></td>
-                    <td class="text-right vert-align total_list" id="total_{{soup.soup_id}}">{{soup.discounted_price|int*soup.soup_cnt|int}}원</td>
+                    <td class="text-right vert-align total_list" id="total_{{soup.soup_id}}">{{'{:,}'.format((soup.discounted_price|int*soup.soup_cnt|int))}}원</td>
                     <td class="text-center vert-align"><a href="#" id="remove_{{soup.soup_id}}" class="remove-item"><i class="icon-close"></i></a></td>
                 </tr>
                 <script>
                 $('#cnt_{{soup.soup_id}}').change(function() {
                     var only_price = $('#price_{{soup.soup_id}}').text();
+                    only_price = only_price.replace(/,/gi,'');
                     only_price = only_price.slice(0,only_price.length-1);
                     var cnt = $(this).val();
                     var total = only_price*cnt;
@@ -52,6 +53,8 @@
                             console.log(error);
                         }
                     });
+                    total = total.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g,'$1,');
+                    total = total.slice(0,total.length-3);
                     $('#total_{{soup.soup_id}}').text(total+'원');
                     update_total_price();
                 });
@@ -144,9 +147,11 @@ function update_total_price() {
     var sum = 0;
     $('.total_list').each(function() {
         var only_price = $(this).text();
+        only_price = only_price.replace(/,/gi,'');
         only_price = only_price.slice(0,only_price.length-1);
         sum += Number(only_price);
     });
+    sum = sum.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,').slice(0,this.length-3);
     $('#result_price').text(sum+'원');
     $('#total_result_price').text(sum+'원');
 }
