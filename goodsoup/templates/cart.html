@@ -22,20 +22,58 @@
                     </tr>
                 </thead>
                 <tbody>
+                {% for soup in ret.cur_cart_list %}
                 <tr >
-                    <td class="vert-align"><a href="/soup_detail/1">사골국</a></td>
-                    <td class="vert-align">8,000원</td>
-                    <td class="text-center vert-align"><input type="number" min="1" max="9" class="form-control form-control-inline" style="width: 52px!important;" value="1"></td>
-                    <td class="text-right vert-align">8,000원</td>
-                    <td class="text-center vert-align"><a href="#" class="remove-item"><i class="icon-close"></i></a></td>
+                    <td class="vert-align"><a href="/soup_detail/{{soup.soup_id}}">{{soup.name}}</a></td>
+                    <td class="vert-align" id="price_{{soup.soup_id}}">{{soup.discounted_price}}원</td>
+                    <td class="text-center vert-align"><input id="cnt_{{soup.soup_id}}" type="number" min="1" max="9" class="form-control form-control-inline" style="width: 52px!important;" value="{{soup.soup_cnt}}"></td>
+                    <td class="text-right vert-align total_list" id="total_{{soup.soup_id}}">{{soup.discounted_price|int*soup.soup_cnt|int}}원</td>
+                    <td class="text-center vert-align"><a href="#" id="remove_{{soup.soup_id}}" class="remove-item"><i class="icon-close"></i></a></td>
                 </tr>
-                <tr >
-                    <td class="vert-align"><a href="/soup_detail/1">오징어국</a></td>
-                    <td class="vert-align">8,000원</td>
-                    <td class="text-center vert-align"><input type="number" min="1" max="9" class="form-control form-control-inline" style="width: 52px!important;" value="1"></td>
-                    <td class="text-right vert-align">8,000원</td>
-                    <td class="text-center vert-align"><a href="#" class="remove-item"><i class="icon-close"></i></a></td>
-                </tr>
+                <script>
+                $('#cnt_{{soup.soup_id}}').change(function() {
+                    var only_price = $('#price_{{soup.soup_id}}').text();
+                    only_price = only_price.slice(0,only_price.length-1);
+                    var cnt = $(this).val();
+                    var total = only_price*cnt;
+                    var data = {
+                        "soup_id": {{soup.soup_id}},
+                        "soup_cnt": cnt
+                    };
+                    $.ajax({
+                        url: '/update_cart',
+                        data: data,
+                        type: 'POST',
+                        success: function(response) {
+                            console.log(response);
+                        //    window.location.href="/cart"
+                        },
+                        error: function(error) {
+                            console.log(error);
+                        }
+                    });
+                    $('#total_{{soup.soup_id}}').text(total+'원');
+                    update_total_price();
+                });
+                $('#remove_{{soup.soup_id}}').click(function() {
+                    var data = {
+                        "soup_id": {{soup.soup_id}},
+                    };
+                    $.ajax({
+                        url: '/delete_cart',
+                        data: data,
+                        type: 'POST',
+                        success: function(response) {
+                            console.log(response);
+                            window.location.href="/cart"
+                        },
+                        error: function(error) {
+                            console.log(error);
+                        }
+                    });
+                });
+                </script>
+                {% endfor %}
 <!--
 if nan: 
 <tr>
@@ -49,7 +87,7 @@ if nan:
 
             <h4>주문 유의사항</h4>
             <p>
-            국은 차갑게 배달됩니다?
+            국은 당일 생산 당일 판매를 목표로 합니다.
             </p>
 
         </div>
@@ -68,7 +106,7 @@ if nan:
                 <tr>
                     <td>가격 :</td>
                     <td></td>
-                    <td class="text-right"><b>16,000원</b></td>
+                    <td class="text-right" id="result_price"><b>16,000원</b></td>
                 </tr>
                 <tr>
                     <td>배송비 :</td>
@@ -83,7 +121,7 @@ if nan:
                 <tr>
                     <td>총 :</td>
                     <td></td>
-                    <td id="total" class="text-right">
+                    <td  class="text-right" id="total_result_price">
                         16,000원
                     </td>
                 </tr>
@@ -101,4 +139,19 @@ if nan:
     </div>
 
 </div>
+<script>
+function update_total_price() {
+    var sum = 0;
+    $('.total_list').each(function() {
+        var only_price = $(this).text();
+        only_price = only_price.slice(0,only_price.length-1);
+        sum += Number(only_price);
+    });
+    $('#result_price').text(sum+'원');
+    $('#total_result_price').text(sum+'원');
+}
+$(document).ready(function() {
+    update_total_price();
+});
+</script>
 {% endblock %}

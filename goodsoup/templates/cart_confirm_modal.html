@@ -1,0 +1,42 @@
+<!-- Modal -->
+<style>
+.modal-backdrop {
+    z-index: 999;
+}
+</style>
+<div class="modal fade" id="cart-confirm-modal" tabindex="-1" role="dialog" aria-labelledby="delete-board-modal-label">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="delete-board-modal-label">장바구니 담기</h4>
+            </div>
+            <div class="modal-body">
+                계속 쇼핑하시겠습니까?
+            </div>
+            <div class="modal-footer">
+                <a href="/soup">
+                    <button type="button" style="margin-bottom:0;" class="btn btn-default">계속</button>
+                </a>
+                <a href="/cart">
+                <button type="button" class="btn btn-primary" >장바구니 이동</button>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $('#delete-soup-button-{{ret.soup.id}}').click(function() {
+        $.ajax({
+            url: '/delete_soup/{{ret.soup.id}}',
+            type: 'POST',
+            success: function(response) {
+            console.log(response);
+            window.location.href = "/soup";
+            },
+            error: function(error){
+                console.log(error);
+            }
+        });
+    });
+</script>

@@ -25,12 +25,22 @@
     <div class="row">
         <div class="col-sm-6">
             <form action="#" method="post" novalidate id="order-form" class="myform">
-                <h3 class="text-center">배송정보</h3>
+                <h3 class="text-center">배송정보
+                </h3>
+                {% if 'logged_in' in session %}
+                <div class="pull-right checkbox" style="margin-top:0px;">
+                    <label>
+                        <input type="checkbox" id="load_user" name="load_user"> 
+                        <span>회원 정보 불러오기
+                        </span>
+                    </label>
+                </div>
+                {% endif %}
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label class="control-label">이름</label>
-                            <input name="name" placeholder="이름" class="form-control" type="text">
+                            <input id="name" name="name" placeholder="이름" class="form-control" type="text">
                         </div>
                     </div>
                 </div>
@@ -40,17 +50,17 @@
                         <div class="company-item-region" id="sigudong-search" >
                             <div class="item_box item-region on">
                                 <div class="col-sm-4" style="padding:0;">
-                                    <select id="si" class="form-control" tabindex="9">
+                                    <select name="si" id="si" class="form-control" tabindex="9">
                                         <option>서울시</option>
                                     </select>
                                 </div>
                                 <div class="col-sm-4" id="gu-col">
-                                    <select id="gu" class="form-control" tabindex="9">
+                                    <select name="gu" id="gu" class="form-control" tabindex="9">
                                         <option>전체</option>
                                     </select>
                                 </div>
                                 <div class="col-sm-4" style="padding:0;">
-                                    <select id="dong" class="form-control" tabindex="9" >
+                                    <select name="dong" id="dong" class="form-control" tabindex="9" >
                                         <option>전체</option>
                                     </select>
                                 </div>
@@ -60,11 +70,11 @@
                 </div>
                 <div class="form-group">
                     <label class="control-label">나머지 주소</label>
-                    <input name="address" placeholder="나머지 주소" class="form-control" type="text" style="margin-top:15px;">
+                    <input id="address" name="address" placeholder="나머지 주소" class="form-control" type="text" style="margin-top:15px;">
                 </div>
                 <div class="form-group">
                     <label class="control-label">연락처</label>
-                    <input name="phone" placeholder="연락처" class="form-control" type="text">
+                    <input id="phone" name="phone" placeholder="연락처" class="form-control" type="text">
                 </div>
             </form>
         </div>
@@ -79,7 +89,7 @@
                 <tr>
                     <td>가격 :</td>
                     <td></td>
-                    <td class="text-right"><b>16,000원</b></td>
+                    <td class="text-right"><b>{{ret.total_price}}원</b></td>
                 </tr>
                 <tr>
                     <td>배송비 :</td>
@@ -95,12 +105,16 @@
                     <td>총 :</td>
                     <td></td>
                     <td id="total" class="text-right">
-                        16,000원
+                        {{ ret.total_price}}원
                     </td>
                 </tr>
                 </tbody>
             </table>
+            {% if (soups|length) != 0 %}
             <div id="pay" class="btn btn-right">결제하기</div>
+            {% else %}
+            <a href="/" class="btn btn-right">장바구니가 비었습니다</a>
+            {% endif %}
         </div>
     </div>
 
@@ -282,6 +296,35 @@ function initLocalSearch() {
 $(document).ready(function() {
     IMP.init('imp27079569');
     initLocalSearch();
+    $('#load_user').change(function() {
+        if ( this.checked ) {
+            $('#name').val("{{session['username']}}");
+            $('#phone').val("{{session['tel']}}");
+            if ( "{{session['si']}}" == "경기도" ) {
+                if ( "{{session['gu']}}" == "수원시 권선구" ) {
+                    $("#gu").val("수원시 권선구").attr("selected","selected");
+                    bindLocal3(".company-item-region");
+                    $("#dong").val("{{session['dong']}}").attr("selected","selected");
+                    $("#address").val("{{session['address']}}").attr("selected","selected");
+                } else if ( "{{session['gu']}}" == "수원시 영통구" ) {
+                    $("#gu").val("수원시 영통구").attr("selected","selected");
+                    bindLocal3(".company-item-region");
+                    $("#dong").val("{{session['dong']}}").attr("selected","selected");
+                    $("#address").val("{{session['address']}}").attr("selected","selected");
+                } else if ( "{{session['gu']}}" == "수원시 장안구" ) {
+                    $("#gu").val("수원시 장안구").attr("selected","selected");
+                    bindLocal3(".company-item-region");
+                    $("#dong").val("{{session['dong']}}").attr("selected","selected");
+                    $("#address").val("{{session['address']}}").attr("selected","selected");
+                } else if ( "{{session['gu']}}" == "수원시 팔달구" ) {
+                    $("#gu").val("수원시 팔달구").attr("selected","selected");
+                    bindLocal3(".company-item-region");
+                    $("#dong").val("{{session['dong']}}").attr("selected","selected");
+                    $("#address").val("{{session['address']}}").attr("selected","selected");
+                }
+            }
+        }
+    });
 });
 $('#pay').click(function() {
 IMP.request_pay({
@@ -289,7 +332,7 @@ IMP.request_pay({
     pay_method : 'card',
     merchant_uid : 'merchant_' + new Date().getTime(),
     name : '주문명:결제테스트',
-    amount : 14000,
+    amount : {{ret.total_price}},
     buyer_email : 'iamport@siot.do',
     buyer_name : '구매자이름',
     buyer_tel : '010-1234-5678',

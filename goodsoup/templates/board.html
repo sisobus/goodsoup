@@ -19,7 +19,15 @@
 <div class="container-fluid title">
     <div class="row">
         <div class="col-sm-12">
+            {% if ret.category_id == 0 %}
             <h2>전체글보기</h2>
+            {% elif ret.category_id == 1 %}
+            <h2>공지사항</h2>
+            {% elif ret.category_id == 2 %}
+            <h2>자유게시판</h2>
+            {% elif ret.category_id == 3 %}
+            <h2>질문/답변</h2>
+            {% endif %}
         </div>
     </div>
 </div>

@@ -1,0 +1,38 @@
+<!-- Modal -->
+<style>
+.modal-backdrop {
+    z-index: 999;
+}
+</style>
+<div class="modal fade" id="delete-soup-modal-{{ret.soup.id}}" tabindex="-1" role="dialog" aria-labelledby="delete-board-modal-label">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="delete-board-modal-label">메뉴 삭제</h4>
+            </div>
+            <div class="modal-body">
+                정말 삭제 하시겠습니까?
+            </div>
+            <div class="modal-footer">
+                <button type="button" style="margin-bottom:0;" class="btn btn-default" data-dismiss="modal">취소 </button>
+                <button type="button" class="btn btn-primary" id="delete-soup-button-{{ret.soup.id}}">삭제하기</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $('#delete-soup-button-{{ret.soup.id}}').click(function() {
+        $.ajax({
+            url: '/delete_soup/{{ret.soup.id}}',
+            type: 'POST',
+            success: function(response) {
+            console.log(response);
+            window.location.href = "/soup";
+            },
+            error: function(error){
+                console.log(error);
+            }
+        });
+    });
+</script>

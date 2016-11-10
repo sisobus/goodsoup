@@ -4,52 +4,65 @@
 .price-won {
     font-size: 20px;
 }
+.myform .form-group label {
+    display:block;
+}
 </style>
 <div class="container-fluid hidden-xs">
     <div class="row">
         <ol class="breadcrumb">
             <li><a href="/soup">국</a></li>
-            <li class="active">오징어국</li>
+            <li class="active">{{ ret.soup.name }}</li>
         </ol>
     </div>
 </div>
 <div class="container-fluid product">
     <div class="row visible-xs product-mobile">
         <div class="col-xs-12 text-center">
-            <h2 class="product-title">오징어국</h2>
+            <h2 class="product-title">{{ret.soup.name}}</h2>
             <div class="product-price">
-                <span class="price-won">8000원</span>
+                {% if ret.soup.price != ret.soup.discounted_price %}
+                <span class="price-won">{{ret.soup.discounted_price}}원 <del>{{ret.soup.price}}원</del></span>
+                {% elif ret.soup.price == ret.soup.discounted_price %}
+                <span class="price-won">{{ret.soup.price}}원</span>
+                {% endif %}
             </div>
         </div>
     </div>
     <div class="row">
         <div class="col-sm-8 ">
-            <img src="{{ url_for('static',filename='files/soup_5.jpg')}}" class="img-responsive product-img" alt="item">
-            <img src="{{ url_for('static',filename='files/soup_5.jpg')}}" class="img-responsive product-img" alt="item">
-            <img src="{{ url_for('static',filename='files/chef.jpg')}}" class="img-responsive product-img" alt="item">
+            {% for soup_image in ret.soup.soup_images %}
+            <img src="{{ (url_for('static',filename=soup_image.image_path))|resize('1540x1026') }}" class="img-responsive product-img" alt="item">
+            {% endfor %}
         </div>
         <div class="col-sm-4">
-            <h2 class="product-title hidden-xs">오징어국</h2>
-            <div class="product-price hidden-xs">
-                <span class="price-won">8000원</span>
+            {% if 'logged_in' in session and session['level'] >= 99 %}
+            <div class="pull-right">
+                <a href="/soup_update/{{ret.soup.id}}">
+                    <button class="btn-warning " style="border:0;font-size:20px;padding:10px;">메뉴 수정</button>
+                </a>
+                <button class="btn-danger " style="border:0;font-size:20px;padding:10px;" data-toggle="modal" data-target="#delete-soup-modal-{{ret.soup.id}}">메뉴 삭제</button>
+                {% include "delete_soup_confirm_modal.html" %}
+            </div>
+            {% endif %}
+
+            <h2 class="product-title hidden-xs">{{ret.soup.name}}</h2>
+                        <div class="product-price hidden-xs">
+                {% if ret.soup.price != ret.soup.discounted_price %}
+                <span class="price-won">{{ret.soup.discounted_price}}원 <del>{{ret.soup.price}}원</del></span>
+                {% elif ret.soup.price == ret.soup.discounted_price %}
+                <span class="price-won">{{ret.soup.price}}원</span>
+                {% endif %}
             </div>
             <div class="product-detail">
                 <p>
-                오징어가 많이 들어있는 오징어국입니다. 
+                {{ ret.soup.description }}
                 </p>
-                <ul>
-                    <li>
-                    맛있습니다.
-                    </li>
-                    <li>
-                    시원합니다.
-                    </li>
-                </ul>
             </div>
-            <form action="#" method="POST" class="myform">
+            <div class="myform">
                 <div class="form-group clearfix">
                     <label class="control-label">갯수</label>
-                    <select class="form-control">
+                    <select class="form-control" id="soup_cnt">
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
@@ -58,11 +71,35 @@
                     </select>
                 </div>
                 <div class="product-btn">
-                    <a href="#" class="btn">장바구니 담기</a>
+                    {% if ret.soup.amount == 0 %}
+                    <a href="#" class="btn">오늘 판매가 끝났습니다</a>
+                    {% else %}
+                    {% include "cart_confirm_modal.html" %}
+                    <button id="save_cart" class="btn" data-toggle="modal" data-target="#cart-confirm-modal">장바구니 담기</button>
+                    {% endif %}
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
+<script>
+$('#save_cart').click(function() {
+    var data = {
+        "soup_id": {{ret.soup.id}},
+        "soup_cnt": $('#soup_cnt').val()
+    };
+    $.ajax({
+        url: '/add_cart',
+        data: data,
+        type: 'POST',
+        success: function(response) {
+            console.log(response);
+        },
+        error: function(error) {
+            console.log(error);
+        }
+    });
+});
+</script>
 
 {% endblock %}

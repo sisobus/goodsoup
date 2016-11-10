@@ -253,6 +253,40 @@ def get_comments_by_board_id(board_id):
                 }
         ret.append(d)
     return ret
+
+def get_soup_image_information(soup_images):
+    ret = []
+    for soup_image in soup_images:
+        d = {
+                'id': soup_image.id,
+                'image_path': utils.get_image_path(soup_image.image_path),
+                'created_at': soup_image.created_at,
+                'soup_id': soup_image.soup_id,
+                'user_id': soup_image.user_id,
+                }
+        ret.append(d)
+    return ret
+
+def get_soup_information(soups):
+    ret = []
+    for soup in soups:
+        if soup.id == 1:
+            continue
+        soup_images = Soup_image.query.filter_by(soup_id=soup.id).order_by(Soup_image.created_at.desc())
+        soup_images = get_soup_image_information(soup_images)
+        d = {
+                'id': soup.id,
+                'name': soup.name,
+                'price': soup.price,
+                'discounted_price': soup.discounted_price,
+                'description': soup.description,
+                'amount': soup.amount,
+                'is_special': soup.is_special,
+                'soup_images': soup_images,
+                }
+        ret.append(d)
+    return ret
+
 ###
 
 ### UPDATE 
@@ -283,6 +317,71 @@ def update_board(board_id):
     elif request.method == 'GET':
         return redirect('/')
     return redirect('/')
+
+@app.route('/update_soup/<int:soup_id>',methods=['POST'])
+@login_required
+def update_soup(soup_id):
+    with app.app_context():
+        soup_create_form = Soup_create_form()
+    soup = Soup.query.filter_by(id=soup_id).first()
+    
+    ret = {
+            'navbar_menus': navbar_menus,
+            'selected_navbar_index': navbar_menus.SOUP,
+            'soup_create_form': soup_create_form,
+            'soup': soup,
+            }
+
+    if request.method == 'POST':
+        if not soup_create_form.validate():
+            return render_template('soup_create.html',ret=ret)
+        soup.name                = soup_create_form.name.data
+        soup.price               = int(soup_create_form.price.data.replace(',',''))
+        soup.discounted_price    = int(soup_create_form.discounted_price.data.replace(',',''))
+        soup.description         = soup_create_form.description.data
+        soup.amount              = int(soup_create_form.amount.data.replace(',',''))
+        is_special          = soup_create_form.is_special.data
+        if is_special:
+            soup.is_special = 1
+        else :
+            soup.is_special = 0
+        db.session.commit()
+        return redirect(url_for('soup_detail',soup_id=soup_id))
+    elif request.method == 'GET':
+        return redirect('/')
+    return redirect('/')
+
+@app.route('/add_cart',methods=['POST'])
+def add_cart():
+    if request.method == 'POST':
+        soup_id = request.form['soup_id']
+        soup_cnt = request.form['soup_cnt']
+        next_cart_list = []
+        for item in session['cart_list']:
+            if item['soup_id'] == soup_id:
+                continue
+            next_cart_list.append(item)
+        next_cart_list.append({
+            'soup_id': soup_id,
+            'soup_cnt': soup_cnt
+            });
+        session['cart_list'] = next_cart_list
+        return json.dumps({'message': 'add cart success'})
+
+@app.route('/update_cart',methods=['POST'])
+def update_cart():
+    if request.method == 'POST':
+        soup_id = request.form['soup_id']
+        soup_cnt = request.form['soup_cnt']
+        next_cart_list = []
+        for item in session['cart_list']:
+            if int(item['soup_id']) == int(soup_id):
+                item['soup_cnt'] = soup_cnt
+            next_cart_list.append(item)
+        session['cart_list'] = next_cart_list
+        return json.dumps({'message': 'update cart success'})
+
+
 
 ###
 
@@ -319,12 +418,43 @@ def delete_image():
         db.session.delete(soup_image)
         db.session.commit()
     return json.dumps({'message': 'delete success'})
+
+@app.route('/delete_soup/<int:soup_id>',methods=['POST'])
+@login_required
+def delete_soup(soup_id):
+    if request.method == 'POST':
+        soup = Soup.query.filter_by(id=soup_id).first()
+        soup_images = Soup_image.query.filter_by(soup_id=soup_id).all()
+        for soup_image in soup_images:
+            db.session.delete(soup_image)
+            db.session.commit()
+        db.session.delete(soup)
+        db.session.commit()
+        return json.dumps({'message': 'delete success'})
+
+    elif request.method == 'GET':
+        return redirect('/')
+    return redirect('/')
+
+@app.route('/delete_cart',methods=['POST'])
+def delete_cart():
+    if request.method == 'POST':
+        soup_id = request.form['soup_id']
+        next_cart_list = []
+        for item in session['cart_list']:
+            if int(item['soup_id']) == int(soup_id):
+                continue
+            next_cart_list.append(item)
+        session['cart_list'] = next_cart_list
+        return json.dumps({'message': 'delete success'})
 ###
 
 
 ### VIEW
 @app.route('/')
 def home():
+    if not 'cart_list' in session:
+        session['cart_list'] = []
     ret = {
             'navbar_menus': navbar_menus,
             'selected_navbar_index': navbar_menus.HOME,
@@ -333,17 +463,26 @@ def home():
 
 @app.route('/soup')
 def soup():
+    special_soups   = Soup.query.filter_by(is_special=1).order_by(Soup.id.desc()).all()
+    soups           = Soup.query.filter_by(is_special=0).order_by(Soup.id.desc()).all()
+    special_soups   = get_soup_information(special_soups)
+    soups           = get_soup_information(soups)
     ret = {
             'navbar_menus': navbar_menus,
             'selected_navbar_index': navbar_menus.SOUP,
+            'special_soups': special_soups,
+            'soups': soups,
             }
     return render_template('soup.html',ret=ret)
 
 @app.route('/soup_detail/<int:soup_id>')
 def soup_detail(soup_id):
+    soup = Soup.query.filter_by(id=soup_id).first()
+    soup = get_soup_information([soup])[0]
     ret = {
             'navbar_menus': navbar_menus,
             'selected_navbar_index': navbar_menus.SOUP,
+            'soup': soup,
             }
     return render_template('soup_detail.html',ret=ret)
 
@@ -358,6 +497,26 @@ def soup_create():
             'soup_create_form': soup_create_form,
             }
     return render_template('soup_create.html',ret=ret)
+
+@app.route('/soup_update/<int:soup_id>')
+@login_required
+def soup_update(soup_id):
+    with app.app_context():
+        soup_create_form = Soup_create_form()
+    soup = Soup.query.filter_by(id=soup_id).first()
+    soup_create_form.name.data = soup.name
+    soup_create_form.price.data = soup.price
+    soup_create_form.discounted_price.data = soup.discounted_price
+    soup_create_form.description.data = soup.description
+    soup_create_form.amount.data = soup.amount
+    soup_create_form.is_special.data = soup.is_special
+    ret = {
+            'navbar_menus': navbar_menus,
+            'selected_navbar_index': navbar_menus.SOUP,
+            'soup_create_form': soup_create_form,
+            'soup': soup,
+            }
+    return render_template('soup_update.html',ret=ret)
 
 
 @app.route('/about')
@@ -400,7 +559,8 @@ def board(category_id):
             'selected_navbar_index': navbar_menus.BOARD,
             'boards': boards,
             'notices': notices,
-            'pagination': pagination
+            'pagination': pagination,
+            'category_id': category_id,
             }
     return render_template('board.html',ret=ret)
 
@@ -493,6 +653,8 @@ def signin():
         session['user_id']  = user.id
         session['level']    = user.level
         session['logged_in']= True
+        if not 'cart_list' in session:
+            session['cart_list'] = []
 
         return redirect(url_for('home'))
     elif request.method =='GET':
@@ -535,6 +697,8 @@ def signup():
         session['level']    = newuser.level
         session['user_id']  = newuser.id
         session['logged_in']= True
+        if not 'cart_list' in session:
+            session['cart_list'] = []
 
         return redirect(url_for('home'))
     elif request.method == 'GET':
@@ -570,17 +734,40 @@ def store():
 
 @app.route('/cart')
 def cart():
+    cur_cart_list = []
+    for item in session['cart_list']:
+        soup = Soup.query.filter_by(id=int(item['soup_id'])).first()
+        d = {
+                'soup_id': soup.id,
+                'name': soup.name,
+                'discounted_price': soup.discounted_price,
+                'soup_cnt': item['soup_cnt'],
+                }
+        cur_cart_list.append(d)
+
     ret = {
             'navbar_menus': navbar_menus,
             'selected_navbar_index': navbar_menus.CART,
+            'cur_cart_list': cur_cart_list,
             }
     return render_template('cart.html',ret=ret)
 
 @app.route('/checkout')
 def checkout():
+    cart_list = session['cart_list']
+    soups = []
+    total_price = 0
+    for item in cart_list:
+        soup = Soup.query.filter_by(id=int(item['soup_id'])).first()
+        soup = get_soup_information([soup])[0]
+        soup['soup_cnt'] = int(item['soup_cnt'])
+        total_price += int(soup['discounted_price'])*int(soup['soup_cnt'])
+        soups.append(soup)
     ret = {
             'navbar_menus': navbar_menus,
             'selected_navbar_index': navbar_menus.SOUP,
+            'soups': soups,
+            'total_price': total_price,
             }
     return render_template('checkout.html',ret=ret)
 ###

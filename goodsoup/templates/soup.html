@@ -33,6 +33,56 @@ card_header {
     max-width: 100%;
     height:270px;
 } 
+.ribbon-wrapper-green {
+  width: 85px;
+  height: 88px;
+  overflow: hidden;
+  position: absolute;
+  top: -3px;
+  right: -3px;
+}
+
+.ribbon-green {
+  font: bold 15px Sans-Serif;
+  color: #333;
+  text-align: center;
+  text-shadow: rgba(255,255,255,0.5) 0px 1px 0px;
+  -webkit-transform: rotate(45deg);
+  -moz-transform:    rotate(45deg);
+  -ms-transform:     rotate(45deg);
+  -o-transform:      rotate(45deg);
+  position: relative;
+  padding: 7px 0;
+  left: -5px;
+  top: 15px;
+  width: 120px;
+  background-color: #BFDC7A;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#BFDC7A), to(#8EBF45)); 
+  background-image: -webkit-linear-gradient(top, #BFDC7A, #8EBF45); 
+  background-image:    -moz-linear-gradient(top, #BFDC7A, #8EBF45); 
+  background-image:     -ms-linear-gradient(top, #BFDC7A, #8EBF45); 
+  background-image:      -o-linear-gradient(top, #BFDC7A, #8EBF45); 
+  color: #6a6340;
+  -webkit-box-shadow: 0px 0px 3px rgba(0,0,0,0.3);
+  -moz-box-shadow:    0px 0px 3px rgba(0,0,0,0.3);
+  box-shadow:         0px 0px 3px rgba(0,0,0,0.3);
+}
+
+.ribbon-green:before, .ribbon-green:after {
+  content: "";
+  border-top:   3px solid #6e8900;   
+  border-left:  3px solid transparent;
+  border-right: 3px solid transparent;
+  position:absolute;
+  bottom: -3px;
+}
+
+.ribbon-green:before {
+  left: 0;
+}
+.ribbon-green:after {
+  right: 0;
+}​
 
 </style>
 <div class="container-fluid productlist">
@@ -46,26 +96,70 @@ card_header {
             </a>
     </div>
     {% endif %}
+    {% for soup in ret.special_soups %}
     <div class="col-lg-4 col-md-4 col-sm-12" style="padding:5px 5px 5px 5px;">
         <div class="card_container"> 
             <div class="card_header">
-                <a href="/soup_detail/1">
-                    <div class="bg" id="soup_background_image" style="background: url({{ url_for('static',filename='files/soup_1.jpg') }});
+                <a href="/soup_detail/{{soup.id}}">
+                    {% if soup.soup_images %}
+                    <div class="bg" id="soup_background_image" style="background: url({{ (url_for('static',filename=soup.soup_images[0].image_path))|resize('756x540') }});
                         background-repeat: no-repeat;
                         background-size: cover;
                         background-position: center;
                         ">
+                        <div class="ribbon-wrapper-green"><div class="ribbon-green">
+                            스페셜 메뉴
+                        </div></div>
                     </div>
+                    {% endif %}
                 </a>
                 <div id="soup_body" style="height:54px;">
                     <div style="display:table-cell;vertical-align:middle;padding-left:10px;padding-top:5px;">
                         <a href="/soup_detail/1">
                             <h4 style="font-weight:bold;padding: 1px 0px 2px 10px;margin:0;">
-                                오징어국
+                                {{ soup.name }} <span style="font-size: 14px;color:#ababab;">(한정 수량:{{soup.amount}})</span>
                             </h4>
                         </a>
                         <a href="/soup_detail/1">
-                            <h5 style="vertical-align:middle; padding: 1px 0px 2px 10px;color:#ababab;margin-top:5px;">8000원</h5>
+                            {% if soup.price == soup.discounted_price %}
+                            <h5 style="vertical-align:middle; padding: 1px 0px 2px 10px;color:#ababab;margin-top:5px;">{{soup.price}}원</h5>
+                            {% elif soup.price != soup.discounted_price %}
+                            <h5 style="vertical-align:middle; padding: 1px 0px 2px 10px;color:#ababab;margin-top:5px;">{{soup.discounted_price}}원 <del>{{soup.price}}원</del></h5>
+                            {% endif %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% for soup in ret.soups %}
+    <div class="col-lg-4 col-md-4 col-sm-12" style="padding:5px 5px 5px 5px;">
+        <div class="card_container"> 
+            <div class="card_header">
+                <a href="/soup_detail/{{soup.id}}">
+                    {% if soup.soup_images %}
+                    <div class="bg" id="soup_background_image" style="background: url({{ (url_for('static',filename=soup.soup_images[0].image_path))|resize('756x540') }});
+                        background-repeat: no-repeat;
+                        background-size: cover;
+                        background-position: center;
+                        ">
+                    </div>
+                    {% endif %}
+                </a>
+                <div id="soup_body" style="height:54px;">
+                    <div style="display:table-cell;vertical-align:middle;padding-left:10px;padding-top:5px;">
+                        <a href="/soup_detail/1">
+                            <h4 style="font-weight:bold;padding: 1px 0px 2px 10px;margin:0;">
+                                {{ soup.name }} <span style="font-size: 14px;color:#ababab;">(한정 수량:{{soup.amount}})</span>
+                            </h4>
+                        </a>
+                        <a href="/soup_detail/1">
+                            {% if soup.price == soup.discounted_price %}
+                            <h5 style="vertical-align:middle; padding: 1px 0px 2px 10px;color:#ababab;margin-top:5px;">{{soup.price}}원</h5>
+                            {% elif soup.price != soup.discounted_price %}
+                            <h5 style="vertical-align:middle; padding: 1px 0px 2px 10px;color:#ababab;margin-top:5px;">{{soup.discounted_price}}원 <del>{{soup.price}}원</del></h5>
+                            {% endif %}
                         </a>
                     </div>
                 </div>
@@ -73,221 +167,7 @@ card_header {
         </div>
     </div>
 
-    <div class="col-lg-4 col-md-4 col-sm-12" style="padding:5px 5px 5px 5px;">
-        <div class="card_container"> 
-            <div class="card_header">
-                <a href="/soup_detail/1">
-                    <div class="bg" id="soup_background_image" style="background: url({{ url_for('static',filename='files/soup_1.jpg') }});
-                        background-repeat: no-repeat;
-                        background-size: cover;
-                        background-position: center;
-                        ">
-                    </div>
-                </a>
-                <div id="soup_body" style="height:54px;">
-                    <div style="display:table-cell;vertical-align:middle;padding-left:10px;padding-top:5px;">
-                        <a href="/soup_detail/1">
-                            <h4 style="font-weight:bold;padding: 1px 0px 2px 10px;margin:0;">
-                                오징어국
-                            </h4>
-                        </a>
-                        <a href="/soup_detail/1">
-                            <h5 style="vertical-align:middle; padding: 1px 0px 2px 10px;;color:#ababab;">8000원</h5>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-4 col-md-4 col-sm-12" style="padding:5px 5px 5px 5px;">
-        <div class="card_container"> 
-            <div class="card_header">
-                <a href="/soup_detail/1">
-                    <div class="bg" id="soup_background_image" style="background: url({{ url_for('static',filename='files/soup_1.jpg') }});
-                        background-repeat: no-repeat;
-                        background-size: cover;
-                        background-position: center;
-                        ">
-                    </div>
-                </a>
-                <div id="soup_body" style="height:54px;">
-                    <div style="display:table-cell;vertical-align:middle;padding-left:10px;padding-top:5px;">
-                        <a href="/soup_detail/1">
-                            <h4 style="font-weight:bold;padding: 1px 0px 2px 10px;margin:0;">
-                                오징어국
-                            </h4>
-                        </a>
-                        <a href="/soup_detail/1">
-                            <h5 style="vertical-align:middle; padding: 1px 0px 2px 10px;;color:#ababab;">8000원</h5>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-4 col-md-4 col-sm-12" style="padding:5px 5px 5px 5px;">
-        <div class="card_container"> 
-            <div class="card_header">
-                <a href="/soup_detail/1">
-                    <div class="bg" id="soup_background_image" style="background: url({{ url_for('static',filename='files/soup_1.jpg') }});
-                        background-repeat: no-repeat;
-                        background-size: cover;
-                        background-position: center;
-                        ">
-                    </div>
-                </a>
-                <div id="soup_body" style="height:54px;">
-                    <div style="display:table-cell;vertical-align:middle;padding-left:10px;padding-top:5px;">
-                        <a href="/soup_detail/1">
-                            <h4 style="font-weight:bold;padding: 1px 0px 2px 10px;margin:0;">
-                                오징어국
-                            </h4>
-                        </a>
-                        <a href="/soup_detail/1">
-                            <h5 style="vertical-align:middle; padding: 1px 0px 2px 10px;;color:#ababab;">8000원</h5>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-4 col-md-4 col-sm-12" style="padding:5px 5px 5px 5px;">
-        <div class="card_container"> 
-            <div class="card_header">
-                <a href="/soup_detail/1">
-                    <div class="bg" id="soup_background_image" style="background: url({{ url_for('static',filename='files/soup_1.jpg') }});
-                        background-repeat: no-repeat;
-                        background-size: cover;
-                        background-position: center;
-                        ">
-                    </div>
-                </a>
-                <div id="soup_body" style="height:54px;">
-                    <div style="display:table-cell;vertical-align:middle;padding-left:10px;padding-top:5px;">
-                        <a href="/soup_detail/1">
-                            <h4 style="font-weight:bold;padding: 1px 0px 2px 10px;margin:0;">
-                                오징어국
-                            </h4>
-                        </a>
-                        <a href="/soup_detail/1">
-                            <h5 style="vertical-align:middle; padding: 1px 0px 2px 10px;;color:#ababab;">8000원</h5>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-4 col-md-4 col-sm-12" style="padding:5px 5px 5px 5px;">
-        <div class="card_container"> 
-            <div class="card_header">
-                <a href="/soup_detail/1">
-                    <div class="bg" id="soup_background_image" style="background: url({{ url_for('static',filename='files/soup_1.jpg') }});
-                        background-repeat: no-repeat;
-                        background-size: cover;
-                        background-position: center;
-                        ">
-                    </div>
-                </a>
-                <div id="soup_body" style="height:54px;">
-                    <div style="display:table-cell;vertical-align:middle;padding-left:10px;padding-top:5px;">
-                        <a href="/soup_detail/1">
-                            <h4 style="font-weight:bold;padding: 1px 0px 2px 10px;margin:0;">
-                                오징어국
-                            </h4>
-                        </a>
-                        <a href="/soup_detail/1">
-                            <h5 style="vertical-align:middle; padding: 1px 0px 2px 10px;;color:#ababab;">8000원</h5>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-4 col-md-4 col-sm-12" style="padding:5px 5px 5px 5px;">
-        <div class="card_container"> 
-            <div class="card_header">
-                <a href="/soup_detail/1">
-                    <div class="bg" id="soup_background_image" style="background: url({{ url_for('static',filename='files/soup_1.jpg') }});
-                        background-repeat: no-repeat;
-                        background-size: cover;
-                        background-position: center;
-                        ">
-                    </div>
-                </a>
-                <div id="soup_body" style="height:54px;">
-                    <div style="display:table-cell;vertical-align:middle;padding-left:10px;padding-top:5px;">
-                        <a href="/soup_detail/1">
-                            <h4 style="font-weight:bold;padding: 1px 0px 2px 10px;margin:0;">
-                                오징어국
-                            </h4>
-                        </a>
-                        <a href="/soup_detail/1">
-                            <h5 style="vertical-align:middle; padding: 1px 0px 2px 10px;;color:#ababab;">8000원</h5>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-4 col-md-4 col-sm-12" style="padding:5px 5px 5px 5px;">
-        <div class="card_container"> 
-            <div class="card_header">
-                <a href="/soup_detail/1">
-                    <div class="bg" id="soup_background_image" style="background: url({{ url_for('static',filename='files/soup_1.jpg') }});
-                        background-repeat: no-repeat;
-                        background-size: cover;
-                        background-position: center;
-                        ">
-                    </div>
-                </a>
-                <div id="soup_body" style="height:54px;">
-                    <div style="display:table-cell;vertical-align:middle;padding-left:10px;padding-top:5px;">
-                        <a href="/soup_detail/1">
-                            <h4 style="font-weight:bold;padding: 1px 0px 2px 10px;margin:0;">
-                                오징어국
-                            </h4>
-                        </a>
-                        <a href="/soup_detail/1">
-                            <h5 style="vertical-align:middle; padding: 1px 0px 2px 10px;;color:#ababab;">8000원</h5>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-4 col-md-4 col-sm-12" style="padding:5px 5px 5px 5px;">
-        <div class="card_container"> 
-            <div class="card_header">
-                <a href="/soup_detail/1">
-                    <div class="bg" id="soup_background_image" style="background: url({{ url_for('static',filename='files/soup_1.jpg') }});
-                        background-repeat: no-repeat;
-                        background-size: cover;
-                        background-position: center;
-                        ">
-                    </div>
-                </a>
-                <div id="soup_body" style="height:54px;">
-                    <div style="display:table-cell;vertical-align:middle;padding-left:10px;padding-top:5px;">
-                        <a href="/soup_detail/1">
-                            <h4 style="font-weight:bold;padding: 1px 0px 2px 10px;margin:0;">
-                                오징어국
-                            </h4>
-                        </a>
-                        <a href="/soup_detail/1">
-                            <h5 style="vertical-align:middle; padding: 1px 0px 2px 10px;;color:#ababab;">8000원</h5>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    {% endfor %}
 </div>
 
 {% endblock %}
