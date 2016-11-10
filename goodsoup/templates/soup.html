@@ -23,7 +23,7 @@ card_header {
     width: 100%;
     position: relative;
     float: left;
-    margin: 1px 1px 1px 1px;
+    margin: 1px 1px 10px 1px;
     background-color: #ffffff;
     border: 1px solid #dddddd;
 }
@@ -117,14 +117,14 @@ card_header {
                     <div style="display:table-cell;vertical-align:middle;padding-left:10px;padding-top:5px;">
                         <a href="/soup_detail/1">
                             <h4 style="font-weight:bold;padding: 1px 0px 2px 10px;margin:0;">
-                                {{ soup.name }} <span style="font-size: 14px;color:#ababab;">(한정 수량:{{soup.amount}})</span>
+                                {{ soup.name }} <span style="font-size: 14px;color:#ababab;">(남은 수량:{{soup.amount}})</span>
                             </h4>
                         </a>
                         <a href="/soup_detail/1">
                             {% if soup.price == soup.discounted_price %}
-                            <h5 style="vertical-align:middle; padding: 1px 0px 2px 10px;color:#ababab;margin-top:5px;">{{soup.price}}원</h5>
+                            <h5 style="vertical-align:middle; padding: 1px 0px 2px 10px;color:black;margin-top:5px;font-weight:bold;">{{soup.price}}원</h5>
                             {% elif soup.price != soup.discounted_price %}
-                            <h5 style="vertical-align:middle; padding: 1px 0px 2px 10px;color:#ababab;margin-top:5px;">{{soup.discounted_price}}원 <del>{{soup.price}}원</del></h5>
+                            <h5 style="vertical-align:middle; padding: 1px 0px 2px 10px;color:black;margin-top:5px;font-weight:bold;">{{soup.discounted_price}}원 <del ><span style="color:#ababab;">{{soup.price}}원</span></del></h5>
                             {% endif %}
                         </a>
                     </div>
@@ -151,14 +151,14 @@ card_header {
                     <div style="display:table-cell;vertical-align:middle;padding-left:10px;padding-top:5px;">
                         <a href="/soup_detail/1">
                             <h4 style="font-weight:bold;padding: 1px 0px 2px 10px;margin:0;">
-                                {{ soup.name }} <span style="font-size: 14px;color:#ababab;">(한정 수량:{{soup.amount}})</span>
+                                {{ soup.name }} <span style="font-size: 14px;color:#ababab;">(남은 수량:{{soup.amount}})</span>
                             </h4>
                         </a>
                         <a href="/soup_detail/1">
                             {% if soup.price == soup.discounted_price %}
-                            <h5 style="vertical-align:middle; padding: 1px 0px 2px 10px;color:#ababab;margin-top:5px;">{{soup.price}}원</h5>
+                            <h5 style="vertical-align:middle; padding: 1px 0px 2px 10px;color:black;margin-top:5px;font-weight:bold;">{{soup.price}}원</h5>
                             {% elif soup.price != soup.discounted_price %}
-                            <h5 style="vertical-align:middle; padding: 1px 0px 2px 10px;color:#ababab;margin-top:5px;">{{soup.discounted_price}}원 <del>{{soup.price}}원</del></h5>
+                            <h5 style="vertical-align:middle; padding: 1px 0px 2px 10px;color:black;margin-top:5px;font-weight:bold;">{{soup.discounted_price}}원 <del ><span style="color:#ababab;">{{soup.price}}원</span></del></h5>
                             {% endif %}
                         </a>
                     </div>

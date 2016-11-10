@@ -22,7 +22,7 @@
             <h2 class="product-title">{{ret.soup.name}}</h2>
             <div class="product-price">
                 {% if ret.soup.price != ret.soup.discounted_price %}
-                <span class="price-won">{{ret.soup.discounted_price}}원 <del>{{ret.soup.price}}원</del></span>
+                <span class="price-won">{{ret.soup.discounted_price}}원 <del style="font-size:16px;color:red;"><span style="color:black;">{{ret.soup.price}}원</span></del></span>
                 {% elif ret.soup.price == ret.soup.discounted_price %}
                 <span class="price-won">{{ret.soup.price}}원</span>
                 {% endif %}
@@ -49,7 +49,7 @@
             <h2 class="product-title hidden-xs">{{ret.soup.name}}</h2>
                         <div class="product-price hidden-xs">
                 {% if ret.soup.price != ret.soup.discounted_price %}
-                <span class="price-won">{{ret.soup.discounted_price}}원 <del>{{ret.soup.price}}원</del></span>
+                <span class="price-won">{{ret.soup.discounted_price}}원 <del style="font-size:16px;color:red;"><span style="color:black;">{{ret.soup.price}}원</span></del></span>
                 {% elif ret.soup.price == ret.soup.discounted_price %}
                 <span class="price-won">{{ret.soup.price}}원</span>
                 {% endif %}
@@ -61,7 +61,7 @@
             </div>
             <div class="myform">
                 <div class="form-group clearfix">
-                    <label class="control-label">갯수</label>
+                    <label class="control-label">수량</label>
                     <select class="form-control" id="soup_cnt">
                         <option value="1">1</option>
                         <option value="2">2</option>

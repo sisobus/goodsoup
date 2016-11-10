@@ -530,7 +530,7 @@ def about():
 @app.route('/board/<int:category_id>')
 def board(category_id):
     search = False
-    per_page = 20
+    per_page = 10
     q = request.args.get('q')
     if q:
         search = True
