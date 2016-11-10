@@ -110,7 +110,7 @@
                 </tr>
                 </tbody>
             </table>
-            {% if (soups|length) != 0 %}
+            {% if ret.total_price != 0 %}
             <div id="pay" class="btn btn-right">결제하기</div>
             {% else %}
             <a href="/" class="btn btn-right">장바구니가 비었습니다</a>
