@@ -115,12 +115,12 @@ card_header {
                 </a>
                 <div id="soup_body" style="height:54px;">
                     <div style="display:table-cell;vertical-align:middle;padding-left:10px;padding-top:5px;">
-                        <a href="/soup_detail/1">
+                        <a href="/soup_detail/{{soup.id}}">
                             <h4 style="font-weight:bold;padding: 1px 0px 2px 10px;margin:0;">
                                 {{ soup.name }} <span style="font-size: 14px;color:#ababab;">(남은 수량:{{soup.amount}})</span>
                             </h4>
                         </a>
-                        <a href="/soup_detail/1">
+                        <a href="/soup_detail/{{soup.id}}">
                             {% if soup.price == soup.discounted_price %}
                             <h5 style="vertical-align:middle; padding: 1px 0px 2px 10px;color:black;margin-top:5px;font-weight:bold;">{{ '{:,}'.format(soup.price)}}원</h5>
                             {% elif soup.price != soup.discounted_price %}
@@ -149,12 +149,12 @@ card_header {
                 </a>
                 <div id="soup_body" style="height:54px;">
                     <div style="display:table-cell;vertical-align:middle;padding-left:10px;padding-top:5px;">
-                        <a href="/soup_detail/1">
+                        <a href="/soup_detail/{{soup.id}}">
                             <h4 style="font-weight:bold;padding: 1px 0px 2px 10px;margin:0;">
                                 {{ soup.name }} <span style="font-size: 14px;color:#ababab;">(남은 수량:{{soup.amount}})</span>
                             </h4>
                         </a>
-                        <a href="/soup_detail/1">
+                        <a href="/soup_detail/{{soup.id}}">
                             {% if soup.price == soup.discounted_price %}
                             <h5 style="vertical-align:middle; padding: 1px 0px 2px 10px;color:black;margin-top:5px;font-weight:bold;">{{'{:,}'.format(soup.price)}}원</h5>
                             {% elif soup.price != soup.discounted_price %}
