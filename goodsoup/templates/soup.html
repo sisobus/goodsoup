@@ -97,10 +97,10 @@ card_header {
     </div>
     {% endif %}
     {% for soup in ret.special_soups %}
-    <div class="col-lg-4 col-md-4 col-sm-12" style="padding:5px 5px 5px 5px;">
+    <div class="col-lg-4 col-md-4 col-sm-12" style="padding:0px 5px 0px 5px;">
         <div class="card_container"> 
             <div class="card_header">
-                <a href="/soup_detail/{{soup.id}}">
+                <a href="/soup_detail/{{soup.id}}" style="text-decoration:none;">
                     {% if soup.soup_images %}
                     <div class="bg" id="soup_background_image" style="background: url({{ (url_for('static',filename=soup.soup_images[0].image_path))|resize('756x540') }});
                         background-repeat: no-repeat;
@@ -108,9 +108,25 @@ card_header {
                         background-position: center;
                         ">
                         <div class="ribbon-wrapper-green"><div class="ribbon-green">
-                            스페셜 메뉴
+                                스페셜 메뉴
                         </div></div>
                     </div>
+                    {% else %}
+                    <div class="bg" id="soup_background_image" style="background-color:#eee;
+                        background-repeat: no-repeat;
+                        background-size: cover;
+                        background-position: center;
+                        ">
+                        <div class="ribbon-wrapper-green"><div class="ribbon-green">
+                                스페셜 메뉴
+                        </div></div>
+                        <div style="text-align:center;">
+                            <h2 style="margin:0;color:black;padding-top:110px;">
+                                착한탕국
+                            </h2>
+                        </div>
+                    </div>
+
                     {% endif %}
                 </a>
                 <div id="soup_body" style="height:54px;">
@@ -134,10 +150,10 @@ card_header {
     </div>
     {% endfor %}
     {% for soup in ret.soups %}
-    <div class="col-lg-4 col-md-4 col-sm-12" style="padding:5px 5px 5px 5px;">
+    <div class="col-lg-4 col-md-4 col-sm-12" style="padding:0px 5px 0px 5px;">
         <div class="card_container"> 
             <div class="card_header">
-                <a href="/soup_detail/{{soup.id}}">
+                <a href="/soup_detail/{{soup.id}}" style="text-decoration:none;">
                     {% if soup.soup_images %}
                     <div class="bg" id="soup_background_image" style="background: url({{ (url_for('static',filename=soup.soup_images[0].image_path))|resize('756x540') }});
                         background-repeat: no-repeat;
@@ -145,6 +161,19 @@ card_header {
                         background-position: center;
                         ">
                     </div>
+                    {% else %}
+                    <div class="bg" id="soup_background_image" style="background-color:#eee;
+                        background-repeat: no-repeat;
+                        background-size: cover;
+                        background-position: center;
+                        ">
+                        <div style="text-align:center;">
+                            <h2 style="margin:0;color:black;padding-top:110px;">
+                                착한탕국
+                            </h2>
+                        </div>
+                    </div>
+
                     {% endif %}
                 </a>
                 <div id="soup_body" style="height:54px;">

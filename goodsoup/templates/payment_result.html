@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+</style>
+<div class="container-fluid productlist">
+    <div class="jumbotron ">
+        <h2>
+            결제가 완료되었습니다.
+        </h2>
+        <h3>
+            결제 번호는 <strong>{{ret.imp_uid}}</strong> 입니다.
+        </h3>
+        <h5>
+            (추후 확인을 위해 적어두세요.)
+        </h5>
+        <br>
+        <a href="/payment_check?imp_uid={{ret.imp_uid}}"><button class="btn">주문확인 바로가기</button></a>
+    </div>
+</div>
+
+{% endblock %}

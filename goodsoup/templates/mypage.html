@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+.pagination-page-info {
+    padding: .6em;
+    padding-left: 0;
+    width: 40em;
+    margin: .5em;
+    margin-left: 0;
+    font-size: 12px;
+}
+.pagination-page-info b {
+    color: black;
+    padding-left: 2px;
+    padding: .1em .25em;
+    font-size: 150%;
+}
+</style>
+<div class="container-fluid title">
+    <div class="row">
+        <div class="col-sm-12">
+            
+        </div>
+    </div>
+</div>
+<div class="container-fluid cart-list">
+    <div class="row">
+        <div class="col-sm-9 blog-content">
+            {{ ret.pagination.info }}
+
+            <table class="table table-striped table-bordered">
+                <thead >
+                    <tr>
+                        <th style="5%;text-align:center;" >
+                            No
+                        </th>
+                        <th style="width:45%;text-align:center;">
+                            제목
+                        </th>
+                        <th style="width:15%;text-align:center;">
+                            카테고리
+                        </th>
+                        <th style="width:14%;text-align:center;">
+                            글쓴이
+                        </th>
+                        <th style="width:7%;text-align:center;">
+                            댓글
+                        </th>
+                        <th style="width:14%;text-align:center;">
+                            작성일
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for notice in ret.notices %}
+                <tr class="danger"> 
+                    <th scope="row" style="text-align:right;">
+                        {{ notice.id }}
+                    </th>
+                    <td >
+                        <a href="/board_detail/{{notice.id}}" style="color:black;">
+                            {{ notice.title }}
+                        </a>
+                    </td>
+                    <td style="text-align:center;">
+                        <a href="/board/{{notice.board_category_id}}" style="color:black;">
+                            {{ notice.board_category_name }}
+                        </a>
+                    </td>
+                    <td style="text-align:center;">
+                        {{ notice.user.username }}
+                    </td>
+                    <td style="text-align:center;">
+                        {{ notice.number_of_comments }}
+                    </td>
+                    <td style="text-align:center;">
+                        {{ notice.created_at.strftime('%Y-%m-%d') }}
+                    </td>
+                </tr>
+                {% endfor %}
+                {% for board in ret.boards %}
+                <tr> 
+                    <th scope="row" style="text-align:right;">
+                        {{ board.id }}
+                    </th>
+                    <td >
+                        <a href="/board_detail/{{board.id}}" style="color:black;">
+                            {{ board.title }}
+                        </a>
+                    </td>
+                    <td style="text-align:center;">
+                        <a href="/board/{{board.board_category_id}}" style="color:black;">
+                            {{ board.board_category_name }}
+                        </a>
+                    </td>
+                    <td style="text-align:center;">
+                        {{ board.user.username }}
+                    </td>
+                    <td style="text-align:center;">
+                        {{ board.number_of_comments}}
+                    </td>
+                    <td style="text-align:center;">
+                        {{ board.created_at.strftime('%Y-%m-%d')}}
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <div class="pull-right">
+                <a href="/board_create">
+                    <button type="submit" class="btn" style="margin:0;">글쓰기</button>
+                </a>
+            </div>
+            <center>
+                {{ ret.pagination.links }}
+            </center>
+        </div>
+        <div class="col-sm-3 blog-sidebar">
+            {% include "board_category.html" %}
+        </div>
+    </div>
+</div>
+<script>
+$(document).ready(function() {
+     $('.pagination ul').addClass('pagination');
+});
+</script>
+{% endblock %}

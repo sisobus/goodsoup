@@ -151,31 +151,27 @@ class Payment(db.Model):
     apply_num       = db.Column(db.Integer)
     state           = db.Column(db.Integer)
     created_at      = db.Column(db.DateTime)
-    si              = db.Column(db.String(100))
-    gu              = db.Column(db.String(100))
-    dong            = db.Column(db.String(100))
-    address         = db.Column(db.String(300))
+    address         = db.Column(db.String(600))
     tel             = db.Column(db.String(200))
-    imp_uid         = db.Column(db.Integer)
-    paid_amout      = db.Column(db.Integer)
+    imp_uid         = db.Column(db.String(200))
+    paid_amount     = db.Column(db.Integer)
 
-    def __init__(self, apply_num, si, gu, dong, address, tel, imp_uid, paid_amout, state=0):
+    def __init__(self, apply_num, address, tel, imp_uid, paid_amount, state=0):
         self.apply_num  = apply_num
         self.created_at = datetime.now()
-        self.si         = si
-        self.gu         = gu    
-        self.dong       = dong
         self.address    = address
         self.tel        = tel
         self.imp_uid    = imp_uid
-        self.paid_amout = paid_amout
+        self.paid_amount= paid_amount
         self.state      = state
 
 class Payment_has_soup(db.Model):
     __tablename__   = 'payment_has_soup'
     payment_id      = db.Column(db.Integer, primary_key=True)
     soup_id         = db.Column(db.Integer, primary_key=True)
+    soup_cnt        = db.Column(db.Integer)
 
-    def __init__(self, payment_id, soup_id):
+    def __init__(self, payment_id, soup_id, soup_cnt):
         self.payment_id = payment_id
         self.soup_id    = soup_id
+        self.soup_cnt   = soup_cnt

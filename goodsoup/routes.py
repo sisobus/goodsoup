@@ -6,7 +6,7 @@ from flask import get_flashed_messages
 from werkzeug import secure_filename
 from werkzeug.datastructures import ImmutableMultiDict
 from werkzeug.datastructures import FileStorage
-from sqlalchemy import func
+from sqlalchemy import *
 
 from config import (
         UPLOAD_FOLDER, 
@@ -14,7 +14,10 @@ from config import (
         GS_SECRET_KEY,
         GS_RESIZE_URL,
         GS_RESIZE_ROOT,
-        GS_RESIZE_CACHE_DIR
+        GS_RESIZE_CACHE_DIR,
+        GS_IMP_TEST_KEY,
+        GS_IMP_TEST_API_KEY,
+        GS_IMP_TEST_SECRET_KEY
         )
 from flask.ext.login import LoginManager, UserMixin, current_user, login_user, logout_user, login_required
 from datetime import datetime, timedelta
@@ -24,6 +27,7 @@ import utils
 import time
 import json
 import flask_resize
+from iamport import Iamport
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI']   = GS_DATABASE_URI
@@ -33,6 +37,8 @@ app.config['RESIZE_URL']                = GS_RESIZE_URL
 app.config['RESIZE_ROOT']               = GS_RESIZE_ROOT
 app.config['RESIZE_CACHE_DIR']          = GS_RESIZE_CACHE_DIR
 flask_resize.Resize(app)
+
+iamport = Iamport(imp_key=GS_IMP_TEST_API_KEY,imp_secret=GS_IMP_TEST_SECRET_KEY)
 
 from models import (
         db,
@@ -79,7 +85,7 @@ def address():
 # address 
 #
 
-navbar_menus = utils.enum('HOME','SOUP','ABOUT','BOARD','STORE','LOGIN','CART')
+navbar_menus = utils.enum('HOME','SOUP','ABOUT','BOARD','STORE','LOGIN','CART','CHECK')
 
 
 ### CREATE
@@ -272,7 +278,15 @@ def get_soup_information(soups):
     for soup in soups:
         if soup.id == 1:
             continue
-        soup_images = Soup_image.query.filter_by(soup_id=soup.id).order_by(Soup_image.created_at.desc())
+        payments = Payment.query.order_by(Payment.created_at.desc()).filter(Payment.created_at >= datetime.today().strftime('%Y-%m-%d'))
+        today_paid_cnt = 0
+        for payment in payments:
+            payment_has_soup = Payment_has_soup.query.filter(and_(Payment_has_soup.payment_id==payment.id,Payment_has_soup.soup_id==soup.id)).first()
+            if payment_has_soup:
+                today_paid_cnt += payment_has_soup.soup_cnt
+
+
+        soup_images = Soup_image.query.filter_by(soup_id=soup.id).order_by(Soup_image.created_at.asc())
         soup_images = get_soup_image_information(soup_images)
         d = {
                 'id': soup.id,
@@ -280,12 +294,39 @@ def get_soup_information(soups):
                 'price': soup.price,
                 'discounted_price': soup.discounted_price,
                 'description': soup.description,
-                'amount': soup.amount,
+                'amount': max(0,soup.amount-today_paid_cnt),
                 'is_special': soup.is_special,
                 'soup_images': soup_images,
                 }
         ret.append(d)
     return ret
+
+def get_payment_information(payments):
+    ret = []
+    for payment in payments:
+        payment_has_soup = Payment_has_soup.query.filter_by(payment_id=payment.id).all()
+        soups = []
+        for phs in payment_has_soup:
+            soup_id = phs.soup_id
+            soup_cnt = phs.soup_cnt
+            soup = Soup.query.filter_by(id=soup_id).first()
+            soup = get_soup_information([soup])[0]
+            soup['soup_cnt'] = soup_cnt
+            soups.append(soup)
+        d = {
+                'id': payment.id,
+                'created_at': payment.created_at,
+                'address': payment.address,
+                'tel': payment.tel,
+                'imp_uid': payment.imp_uid,
+                'paid_amount': payment.paid_amount,
+                'apply_num': payment.apply_num,
+                'state': payment.state,
+                'soups': soups
+                }
+        ret.append(d)
+    return ret
+
 
 ###
 
@@ -757,10 +798,12 @@ def checkout():
     cart_list = session['cart_list']
     soups = []
     total_price = 0
+    total_cnt   = 0
     for item in cart_list:
         soup = Soup.query.filter_by(id=int(item['soup_id'])).first()
         soup = get_soup_information([soup])[0]
         soup['soup_cnt'] = int(item['soup_cnt'])
+        total_cnt += int(item['soup_cnt'])
         total_price += int(soup['discounted_price'])*int(soup['soup_cnt'])
         soups.append(soup)
     ret = {
@@ -768,8 +811,162 @@ def checkout():
             'selected_navbar_index': navbar_menus.SOUP,
             'soups': soups,
             'total_price': total_price,
+            'total_cnt': total_cnt,
             }
     return render_template('checkout.html',ret=ret)
+
+@app.route('/mpayments/complete',methods=['GET'])
+def mpayments_complete():
+    if request.method == 'GET':
+        imp_uid = request.args.get('imp_uid')
+        response = iamport.find(imp_uid=imp_uid)
+
+        cart_list = session['cart_list']
+        soups = []
+        total_price = 0
+        total_cnt   = 0
+        for item in cart_list:
+            soup = Soup.query.filter_by(id=int(item['soup_id'])).first()
+            soup = get_soup_information([soup])[0]
+            soup['soup_cnt'] = int(item['soup_cnt'])
+            total_cnt += int(item['soup_cnt'])
+            total_price += int(soup['discounted_price'])*int(soup['soup_cnt'])
+            soups.append(soup)
+
+        if iamport.is_paid(total_price, response=response):
+            apply_num       = response['apply_num']
+            address         = response['buyer_addr']
+            tel             = response['buyer_tel']
+            imp_uid         = response['imp_uid']
+            paid_amount     = response['amount']
+            new_payment     = Payment(apply_num,address,tel,imp_uid,paid_amount)
+            db.session.add(new_payment)
+            db.session.commit()
+
+            for soup in soups:
+                payment_has_soup = Payment_has_soup(new_payment.id,soup['id'],soup['soup_cnt'])
+                db.session.add(payment_has_soup)
+                db.session.commit()
+
+            session['cart_list'] = []
+            return redirect(url_for('payment_result',imp_uid=imp_uid))
+        else :
+            return json.dumps({'success':False}), 402, {'ContentType':'application/json'} 
+
+
+
+@app.route('/payments/complete',methods=['POST'])
+def payments_complete():
+    if request.method == 'POST':
+        imp_uid = request.form.get('imp_uid')
+        response = iamport.find(imp_uid=imp_uid)
+
+        cart_list = session['cart_list']
+        soups = []
+        total_price = 0
+        total_cnt   = 0
+        for item in cart_list:
+            soup = Soup.query.filter_by(id=int(item['soup_id'])).first()
+            soup = get_soup_information([soup])[0]
+            soup['soup_cnt'] = int(item['soup_cnt'])
+            total_cnt += int(item['soup_cnt'])
+            total_price += int(soup['discounted_price'])*int(soup['soup_cnt'])
+            soups.append(soup)
+
+        if iamport.is_paid(total_price, response=response):
+            apply_num       = response['apply_num']
+            address         = response['buyer_addr']
+            tel             = response['buyer_tel']
+            imp_uid         = response['imp_uid']
+            paid_amount     = response['amount']
+            new_payment     = Payment(apply_num,address,tel,imp_uid,paid_amount)
+            db.session.add(new_payment)
+            db.session.commit()
+
+            for soup in soups:
+                payment_has_soup = Payment_has_soup(new_payment.id,soup['id'],soup['soup_cnt'])
+                db.session.add(payment_has_soup)
+                db.session.commit()
+
+            session['cart_list'] = []
+            return json.dumps({'success':True,'imp_uid':imp_uid}), 200, {'ContentType':'application/json'} 
+        else :
+            return json.dumps({'success':False}), 402, {'ContentType':'application/json'} 
+
+@app.route('/payment_result/<imp_uid>')
+def payment_result(imp_uid):
+    ret = {
+            'navbar_menus': navbar_menus,
+            'selected_navbar_index': navbar_menus.CART,
+            'imp_uid': imp_uid,
+            }
+    return render_template('payment_result.html',ret=ret)
+
+@app.route('/payment_check',methods=['GET','POST'])
+def payment_check():
+    ret = {
+            'navbar_menus': navbar_menus,
+            'selected_navbar_index': navbar_menus.CHECK,
+            }
+    if request.method == 'GET':
+        if request.args.get('imp_uid'):
+            ret['imp_uid'] = request.args.get('imp_uid')
+        return render_template('payment_check.html',ret=ret)
+    elif request.method == 'POST':
+        imp_uid_search = request.form.get('imp_uid_search')
+        payment = Payment.query.filter_by(imp_uid=imp_uid_search).first()
+        if payment:
+            ret['pay_check'] = True
+            payment_has_soup = Payment_has_soup.query.filter_by(payment_id=payment.id).all()
+            soups = []
+            for phs in payment_has_soup:
+                payment_id  = phs.payment_id
+                soup_id     = phs.soup_id
+                soup_cnt    = phs.soup_cnt
+                soup = Soup.query.filter_by(id=soup_id).first()
+                soup = get_soup_information([soup])[0]
+                soup['soup_cnt'] = soup_cnt
+                soups.append(soup)
+            ret['payment'] = payment
+            ret['soups'] = soups
+            return render_template('payment_check.html',ret=ret)
+        else:
+            ret['pay_not_found'] = True
+            return render_template('payment_check.html',ret=ret)
+        return render_template('payment_check.html',ret=ret)
+
+@app.route('/admin')
+@login_required 
+def admin():
+    if not 'logged_in' in session:
+        return redirect('/')
+    if session['level'] < 99:
+        return redirect('/')
+    
+    search = False
+    per_page = 20
+    q = request.args.get('q')
+    if q:
+        search = True
+    try:
+        page = int(request.args.get('page',1))
+    except ValueError:
+        page = 1
+    
+    payments = Payment.query.order_by(Payment.created_at.desc()).limit(per_page).offset((page-1)*per_page)
+    total_count = Payment.query.count()
+    pagination = Pagination(page=page, total=total_count, search=search, record_name='payment', per_page=per_page)
+    payments = get_payment_information(payments)
+    ret = {
+            'navbar_menus': navbar_menus,
+            'selected_navbar_index': navbar_menus.LOGIN,
+            'payments': payments,
+            'pagination': pagination,
+            }
+
+    return render_template('admin.html',ret=ret)
+
+
 ###
 
 if __name__ == '__main__':

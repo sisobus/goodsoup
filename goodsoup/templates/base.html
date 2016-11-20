@@ -46,6 +46,18 @@
                     <li {% if ret.navbar_menus.STORE == ret.selected_navbar_index %}class="active"{% endif %}>
                         <a href="/store">매장안내</a>
                     </li>
+                    <li {% if ret.navbar_menus.CHECK == ret.selected_navbar_index %}class="active"{% endif %}>
+                    <a href="/payment_check">
+                        주문확인 
+                    </a>
+                    </li>
+                    {% if 'logged_in' in session and session['level'] >= 99 %}
+                    <li >
+                    <a href="/admin">
+                        관리자 페이지
+                    </a>
+                    </li>
+                    {% endif %}
                     {% if not 'logged_in' in session %}
                     <li {% if ret.navbar_menus.LOGIN == ret.selected_navbar_index %}class="active"{% endif %}>
                     <a href="/login">회원가입/로그인</a>
@@ -77,7 +89,7 @@
 
                         <a href="/" class="nav-brand" style="border:0;">
                             착한<span>탕국</span>
-                    <h5 class="hidden-xs" style="font-size:14px;font-weight:bold;">국 포장 전문 배달점</h5>
+                    <h5 class="hidden-xs" style="font-size:21px;font-weight:bold;">국 포장 전문 배달점</h5>
                         </a>
                         <a class="nav-icon pull-right visible-xs menu-link" href="#"><i class="icon-menu2"></i></a>
                         <a class="nav-icon-outline cart pull-right" href="/cart"><i class="icon-cart"></i><span class="badge">{{session['cart_list']|length}}</span></a>
