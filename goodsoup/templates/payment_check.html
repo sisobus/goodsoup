@@ -33,7 +33,7 @@
                 <tbody>
                 {% for soup in ret.soups %}
                 <tr >
-                    <td class="vert-align"><a href="/soup_detail/{{soup.soup_id}}">{{soup.name}}</a></td>
+                    <td class="vert-align"><a href="/soup_detail/{{soup.id}}">{{soup.name}}</a></td>
                     <td class="vert-align" id="price_{{soup.soup_id}}">{{'{:,}'.format(soup.discounted_price)}}원</td>
                     <td class="text-center vert-align">{{soup.soup_cnt}}</td>
                     <td class="text-right vert-align total_list" id="total_{{soup.soup_id}}">{{'{:,}'.format((soup.discounted_price|int*soup.soup_cnt|int))}}원</td>

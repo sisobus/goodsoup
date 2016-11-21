@@ -34,7 +34,7 @@
                         <th style="5%;text-align:center;" >
                             No
                         </th>
-                        <th style="width:30%;text-align:center;">
+                        <th style="width:27%;text-align:center;">
                             주소
                         </th>
                         <th style="width:30%;text-align:center;">
@@ -49,7 +49,7 @@
                         <th style="width:9%;text-align:center;">
                             날짜
                         </th>
-                        <th style="width:6%;text-align:center;">
+                        <th style="width:9%;text-align:center;">
                             배송 상태
                         </th>
                     </tr>
@@ -60,7 +60,7 @@
                     <th scope="row" style="width:5%;text-align:right;">
                         {{ payment.id }}
                     </th>
-                    <td style="width:30%;">
+                    <td style="width:27%;">
                         {{ payment.address }}
                     </td>
                     <td style="width:30%;">
@@ -80,8 +80,15 @@
                     <td style="width:9%;text-align:center;">
                         {{ payment.created_at.strftime('%Y-%m-%d') }}
                     </td>
-                    <td style="width:6%;text-align:center;">
-                        {{ payment.state }}
+                    <td style="width:9%;text-align:center;">
+                        <select id="state-{{payment.id}}" name="state-{{payment.id}}" class="form-control">
+                            <option {% if payment.state == 0 %}selected="selected"{% endif %} value="0">
+                                배송전
+                            </option>
+                            <option {% if payment.state == 1 %}selected="selected"{% endif %} value="1">
+                                배송완료
+                            </option>
+                        </select>
                     </td>
                 </tr>
                 {% endfor %}
@@ -100,6 +107,25 @@
 <script>
 $(document).ready(function() {
      $('.pagination ul').addClass('pagination');
+     $('select').change(function() {
+         var payment_id = $(this).attr('id').split('-')[1];
+         var payment_state = $(this).val();
+         var data = {
+            "payment_id": payment_id,
+            "payment_state": payment_state
+         };
+         $.ajax({
+            url: 'payment_state_edit',
+            data: data,
+            type: 'POST',
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+         });
+     });
 });
 </script>
 {% endblock %}

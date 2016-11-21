@@ -966,6 +966,21 @@ def admin():
 
     return render_template('admin.html',ret=ret)
 
+@app.route('/payment_state_edit',methods=['POST'])
+@login_required
+def payment_state_edit():
+    if not 'logged_in' in session:
+        return redirect('/')
+    if session['level'] < 99 :
+        return redirect('/')
+    if request.method == 'POST':
+        payment_id = request.form.get('payment_id')
+        payment_state = request.form.get('payment_state')
+        payment = Payment.query.filter_by(id=payment_id).first()
+        payment.state = int(payment_state)
+        db.session.commit()
+        return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 
+    return json.dumps({'success':False}), 402, {'ContentType':'application/json'}
 
 ###
 
