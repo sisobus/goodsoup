@@ -26,6 +26,24 @@
 <div class="container-fluid cart-list">
     <div class="row">
         <div class="col-sm-12 blog-content">
+            <div class="pull-right">
+                <form action="/admin" method="GET" class="">
+                    <div style="display:inline-block;width: 40%; padding-right: 10px;padding-left:15px;">
+                        <input id="q" name="q" class="form-control" placeholder="전화번호로 검색" type="text" >
+                    </div>
+                    <select id="gu" name="gu" class="form-control" style="display:inline-block;width:150px;">
+                        <option>전체</option>
+                        <option>영통구</option>
+                        <option>권선구</option>
+                        <option>기흥구</option>
+                    </select>
+
+                    <div style="display:inline-block;">
+                        <button id="search_button" class="btn" type="submit" style="margin-bottom:1px;height:34px;line-height:24px;">검색</button>
+                    </div>
+                </form>
+            </div>
+
             {{ ret.pagination.info }}
 
             <table class="table table-striped table-bordered">
@@ -37,8 +55,11 @@
                         <th style="width:27%;text-align:center;">
                             주소
                         </th>
-                        <th style="width:30%;text-align:center;">
+                        <th style="width:25%;text-align:center;">
                             국 
+                        </th>
+                        <th style="width:5%;text-align:center;">
+                            구매자
                         </th>
                         <th style="width:12%;text-align:center;">
                             전화번호
@@ -63,13 +84,16 @@
                     <td style="width:27%;">
                         {{ payment.address }}
                     </td>
-                    <td style="width:30%;">
+                    <td style="width:25%;">
                         {% for soup in payment.soups %}
                             {% if soup != payment.soups[0] %}
                             ,&nbsp;
                             {% endif %}
                             {{soup.name}} {{soup.soup_cnt}}개
                         {% endfor %}
+                    </td>
+                    <td style="width:5%;">
+                        {{ payment.user.username }} 
                     </td>
                     <td style="width:12%;text-align:center;">
                         {{ payment.tel }}

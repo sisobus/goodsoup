@@ -3,6 +3,7 @@ from flask import Flask, url_for
 from flask.ext.paginate import Pagination
 from flask import render_template, flash, redirect, session, url_for, request, g, jsonify
 from flask import get_flashed_messages
+from flask_mail import Mail, Message
 from werkzeug import secure_filename
 from werkzeug.datastructures import ImmutableMultiDict
 from werkzeug.datastructures import FileStorage
@@ -52,9 +53,7 @@ app.config["MAIL_USE_SSL"] = True
 app.config["MAIL_USERNAME"] = MAIL_USERNAME 
 app.config["MAIL_PASSWORD"] = MAIL_PASSWORD
 flask_resize.Resize(app)
-from flask.ext.mail import Mail
 mail = Mail(app)
-from flask.ext.mail import Message
 
 iamport = Iamport(imp_key=GS_IMP_TEST_API_KEY,imp_secret=GS_IMP_TEST_SECRET_KEY)
 
@@ -352,6 +351,8 @@ def get_payment_information(payments):
             soup = get_soup_information([soup])[0]
             soup['soup_cnt'] = soup_cnt
             soups.append(soup)
+        user = User.query.filter_by(id=payment.user_id).first()
+
         d = {
                 'id': payment.id,
                 'created_at': payment.created_at,
@@ -361,7 +362,8 @@ def get_payment_information(payments):
                 'paid_amount': payment.paid_amount,
                 'apply_num': payment.apply_num,
                 'state': payment.state,
-                'soups': soups
+                'soups': soups,
+                'user': user,
                 }
         ret.append(d)
     return ret
@@ -560,6 +562,10 @@ def delete_soup(soup_id):
         soup_images = Soup_image.query.filter_by(soup_id=soup_id).all()
         for soup_image in soup_images:
             db.session.delete(soup_image)
+            db.session.commit()
+        payment_has_soups = Payment_has_soup.query.filter_by(soup_id=soup.id).all()
+        for payment_has_soup in payment_has_soups:
+            db.session.delete(payment_has_soup)
             db.session.commit()
         db.session.delete(soup)
         db.session.commit()
@@ -1062,9 +1068,29 @@ def admin():
         page = int(request.args.get('page',1))
     except ValueError:
         page = 1
-    
-    payments = Payment.query.order_by(Payment.created_at.desc()).limit(per_page).offset((page-1)*per_page)
-    total_count = Payment.query.count()
+    gu = request.args.get('gu')
+    if q:
+        q = q.strip()
+    if gu:
+        gu = gu.strip()
+    if gu and gu == u'전체':
+        if q == '':
+            payments = Payment.query.order_by(Payment.created_at.desc()).limit(per_page).offset((page-1)*per_page)
+            total_count = Payment.query.count()
+        else :
+            payments = Payment.query.filter(Payment.tel.like('%'+q+'%')).order_by(Payment.created_at.desc()).limit(per_page).offset((page-1)*per_page)
+            total_count = Payment.query.filter_by(tel=q).count()
+    elif gu:
+        if q == '':
+            payments = Payment.query.filter(Payment.address.like('%'+gu+'%')).order_by(Payment.created_at.desc()).limit(per_page).offset((page-1)*per_page)
+            total_count = Payment.query.filter(Payment.address.like('%'+gu+'%')).count()
+        else:
+            payments = Payment.query.filter(and_(Payment.tel.like('%'+q+'%'),Payment.address.like('%'+gu+'%'))).order_by(Payment.created_at.desc()).limit(per_page).offset((page-1)*per_page)
+            total_count = Payment.query.filter(Payment.address.like('%'+gu+'%')).count()
+    else:
+        payments = Payment.query.order_by(Payment.created_at.desc()).limit(per_page).offset((page-1)*per_page)
+        total_count = Payment.query.count()
+
     pagination = Pagination(page=page, total=total_count, search=search, record_name='payment', per_page=per_page)
     payments = get_payment_information(payments)
     ret = {
@@ -1174,11 +1200,6 @@ def send_new_password():
                 u'임시 비밀번호 : %s'%tmp_password)
     return render_template('send_email_result.html',ret=ret)
 
-@app.route('/test_mail')
-def test_mail():
-    print send_email('test','help.hausmart@gmail.com',['sisobus@naver.com'],'test','test')
-    return redirect('/')
-    
 
 
 ###

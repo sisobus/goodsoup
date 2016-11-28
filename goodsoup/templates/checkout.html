@@ -78,9 +78,15 @@ input[type="radio"] {
                 </div>
                 <div class="form-group">
                     <label class="control-label">연락처</label>
-                    <input id="phone" name="phone" placeholder="연락처" class="form-control" type="text">
+                    <input id="phone" name="phone" placeholder="연락처(000-0000-0000 형식만 가능)" class="form-control" type="text">
                 </div>
             </form>
+            <h4 style="color:red;">주문 유의사항</h4>
+            <p style="line-height:1.6;">
+             * 오후 7시 이전 주문 완료 시 <span style="color:red;">다음날 배송</span>됩니다
+. <br>
+            * 오후 7시 이후 주문 완료 시 <span style="color:red;">이틀후</span> 배송됩니다. 
+            </p> 
         </div>
         <div class="col-sm-6 ">
             <table class="table">
@@ -117,7 +123,9 @@ input[type="radio"] {
             {% if ret.total_price != 0 %}
             <label><input type="radio" value="card" name="pay_info" checked="checked">신용/체크카드</label>&nbsp;&nbsp;
             <label><input type="radio" value="trans" name="pay_info" >실시간 계좌이체</label>&nbsp;&nbsp;
+            <!--
             <label><input type="radio" value="phone" name="pay_info" >휴대폰 결제</label>
+            -->
             <br>
             <div id="pay" class="btn btn-right">결제하기</div>
             {% else %}
@@ -134,6 +142,15 @@ input[type="radio"] {
 
 </div>
 <script type="text/javascript">
+function tel_check(s) {
+    var re = /^\+?([0-9][0-9][0-9]?)\)?[-]([0-9][0-9][0-9][0-9]?)[-]([0-9]{4})$/;
+    var re1 = /^([0-9]{4})[-]([0-9]{4})$/;
+    if ( s.match(re) || s.match(re1) ) {
+        return true;
+    } else {
+        return false;
+    }
+}
     window.state = {};
 function bindLocal1(obj) {
         var map = window.state.map;
@@ -304,6 +321,15 @@ function initLocalSearch() {
 $(document).ready(function() {
     IMP.init('imp27079569');
     initLocalSearch();
+    $('#phone').change(function() {
+        var tel = $(this).val();
+        if ( tel_check(tel) ) {
+            $(this).css('border','1px solid #ccc');
+        } else {
+            $(this).val('');
+            $(this).css('border','2px solid red');
+        }
+    });
     $('#load_user').change(function() {
         if ( this.checked ) {
             $('#name').val("{{session['username']}}");

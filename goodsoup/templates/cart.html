@@ -88,9 +88,10 @@ if nan:
                 </tbody>
             </table>
 
-            <h4>주문 유의사항</h4>
-            <p>
-            국은 당일 생산 당일 판매를 목표로 합니다.
+            <h4 style="color:red;">주문 유의사항</h4>
+            <p style="line-height:1.6;">
+            * 오후 7시 이전 주문 완료 시 <span style="color:red;">다음날 배송</span>됩니다. <br>
+            * 오후 7시 이후 주문 완료 시 <span style="color:red;">이틀후</span> 배송됩니다. 
             </p>
 
         </div>
@@ -132,6 +133,9 @@ if nan:
             </table>
 
             <a href="/checkout" class="btn btn-right">다음으로</a>
+            <p>
+            * 10,000원 이상 무료배송
+            </p>
         </div>
     </div>
 
@@ -151,10 +155,10 @@ function update_total_price() {
         only_price = only_price.slice(0,only_price.length-1);
         sum += Number(only_price);
     });
-    sum = sum.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,').slice(0,this.length-3);
-    $('#result_price').text(sum+'원');
+    sum_text = sum.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,').slice(0,this.length-3);
+    $('#result_price').text(sum_text+'원');
     var delivery_price = 0;
-    if ( sum < 10000 ) delivery_price = 2000;
+    if ( Number(sum) < 10000 ) delivery_price = 2000;
     $('#delivery_price').text(delivery_price.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,').slice(0,this.length-3)+'원');
     var payment_price = Number(sum) + Number(delivery_price);
     $('#total_result_price').text(payment_price.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,').slice(0,this.length-3)+'원');
