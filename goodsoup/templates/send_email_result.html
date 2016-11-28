@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+</style>
+<div class="container-fluid productlist">
+    <div class="jumbotron ">
+        <h2>
+            비밀번호를 초기화했습니다.
+        </h2>
+        <h3>
+            {{ ret.email }}로 임시 비밀번호를 전송했습니다.
+        </h3>
+        <h5>
+            (로그인 후 반드시 비밀번호를 변경해주시기 바랍니다.)
+        </h5>
+        <br>
+    </div>
+</div>
+
+{% endblock %}

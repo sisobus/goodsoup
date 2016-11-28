@@ -1,0 +1,24 @@
+<div class="widget">
+    <h3>회원 정보</h3>
+    <ul class="nav" style="padding-left:0;">
+        <li style="border-bottom:1px solid #eeeeee;">
+        이름 : {{ ret.user.username }}
+        </li>
+        <li style="border-bottom:1px solid #eeeeee;">
+        주소 : {{ ret.user.si }} {{ret.user.gu}} {{ret.user.dong}} {{ret.user.address}}
+        </li>
+        <li style="border-bottom:1px solid #eeeeee;">
+        전화번호 : {{ret.user.tel}}
+        </li>
+    </ul>
+    <hr>
+</div>
+<div class="widget">
+    <h3>카테고리</h3>
+    <ul class="nav" style="padding-left:0;">
+        <li style="border-bottom:1px solid #eeeeee;"><a href="/mypage/0"><i class="fa fa-book"></i>&nbsp;주문내역</a></li>
+        <li style="border-bottom:1px solid #eeeeee;"><a href="/mypage/1"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;회원정보 수정</a></li>
+        <li style="border-bottom:1px solid #eeeeee;"><a href="/mypage/2"><i class="fa fa-unlock-alt" aria-hidden="true"></i>&nbsp;비밀번호 변경</a></li>
+    </ul>
+    <hr>
+</div>

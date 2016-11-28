@@ -114,7 +114,7 @@ if nan:
                 <tr>
                     <td>배송비 :</td>
                     <td></td>
-                    <td class="text-right">0원</td>
+                    <td class="text-right" id="delivery_price">0원</td>
                 </tr>
                 <tr>
                     <td>부가세 :</td>
@@ -153,7 +153,11 @@ function update_total_price() {
     });
     sum = sum.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,').slice(0,this.length-3);
     $('#result_price').text(sum+'원');
-    $('#total_result_price').text(sum+'원');
+    var delivery_price = 0;
+    if ( sum < 10000 ) delivery_price = 2000;
+    $('#delivery_price').text(delivery_price.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,').slice(0,this.length-3)+'원');
+    var payment_price = Number(sum) + Number(delivery_price);
+    $('#total_result_price').text(payment_price.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,').slice(0,this.length-3)+'원');
 }
 $(document).ready(function() {
     update_total_price();

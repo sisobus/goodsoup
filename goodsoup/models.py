@@ -155,8 +155,9 @@ class Payment(db.Model):
     tel             = db.Column(db.String(200))
     imp_uid         = db.Column(db.String(200))
     paid_amount     = db.Column(db.Integer)
+    user_id         = db.Column(db.Integer)
 
-    def __init__(self, apply_num, address, tel, imp_uid, paid_amount, state=0):
+    def __init__(self, apply_num, address, tel, imp_uid, paid_amount, state=0, user_id=1):
         self.apply_num  = apply_num
         self.created_at = datetime.now()
         self.address    = address
@@ -164,6 +165,7 @@ class Payment(db.Model):
         self.imp_uid    = imp_uid
         self.paid_amount= paid_amount
         self.state      = state
+        self.user_id    = user_id
 
 class Payment_has_soup(db.Model):
     __tablename__   = 'payment_has_soup'

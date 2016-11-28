@@ -1,12 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
 <style>
-#gu-col {
-    padding: 0px 10px 0px 10px;
+.myform .form-group label {
+    display:block;
 }
+#gu-col {
+        padding: 0px 10px 0px 10px;
+}
+/*
 #address {
     margin-top: 15px;
 }
+*/
 @media screen and (max-width: 767px) {
     #gu-col {
         padding: 0;
@@ -15,92 +20,45 @@
         margin-bottom: 10px;
     }
 }
+.pagination-page-info {
+    padding: .6em;
+    padding-left: 0;
+    width: 40em;
+    margin: .5em;
+    margin-left: 0;
+    font-size: 12px;
+}
+.pagination-page-info b {
+    color: black;
+    padding-left: 2px;
+    padding: .1em .25em;
+    font-size: 150%;
+}
 </style>
+<div class="container-fluid title">
+    <div class="row">
+        <div class="col-sm-12">
+            <h2>
+                회원정보 변경
+            </h2>
+        </div>
+    </div>
+</div>
 <div class="container-fluid cart-list">
     <div class="row">
-        <div class="col-sm-6">
-            <form action="/signin" method="post" novalidate  class="myform">
-                {{ ret.signin_form.hidden_tag() }}
-                <h2 class="text-center">로그인</h2>
-
+        <div class="col-sm-9 blog-content">
+            <form action="/update_user" method="post" class="myform">
+                {{ ret.update_user_form.hidden_tag() }}
                 <div class="form-group">
-                    <label class="control-label">이메일</label>
-                    {% for message in ret.signin_form.email.errors %}
+                    <label class="control-label">이름</label>
+                    {% for message in ret.update_user_form.username.errors %}
                     <div class="flash">{{ message }}</div>
                     {% endfor %}
-                    {{ ret.signin_form.email(placeholder="이메일",class="form-control") }}
-                </div>
-                <div class="form-group">
-                    <label class="control-label">비밀번호</label>
-                    {% for message in ret.signin_form.password.errors %}
-                    <div class="flash">{{ message }}</div>
-                    {% endfor %}
-                    {{ ret.signin_form.password(placeholder="비밀번호",class="form-control") }}
-                </div>
-
-                <div class="checkbox">
-                    <label>
-                        {{ ret.signin_form.auto_login }}
-                        <span>자동 로그인
-                        </span>
-                    </label>
-                    <!--
-                <div class="pull-right">
-                    <a href="/find_password">
-                        비밀번호 찾기
-                    </a>
-                </div>
-                -->
-                </div>
-
-                <!--                            <div class="radio">
-                              <label>
-                                <input type="radio" value="option1" >
-                                <span>Option one is this and that&mdash;be sure</span>
-                              </label>
-                            </div> -->
-
-                <p><button name="submit" type="submit" class="btn btn-store btn-block">로그인</button></p>
-            </form>
-        </div>
-        <div class="col-sm-6">
-            <form action="/signup" method="post" novalidate class="myform">
-                {{ ret.signup_form.hidden_tag() }}
-                <h2 class="text-center">회원가입</h2>
-                <div class="row">
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="control-label">이름</label>
-                            {% for message in ret.signup_form.username.errors %}
-                            <div class="flash">{{ message }}</div>
-                            {% endfor %}
-                            {{ret.signup_form.username(placeholder="이름",class="form-control")}}
-                        </div>
-                    </div>
+                    {{ ret.update_user_form.username(placeholder="이름" ,class="form-control") }}
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label">이메일</label>
-                    {% for message in ret.signup_form.email.errors %}
-                    <div class="flash">{{ message }}</div>
-                    {% endfor %}
-                    {{ ret.signup_form.email(placeholder="이메일", class="form-control") }}
-                </div>
-                <div class="form-group">
-                    <label class="control-label">비밀번호</label>
-                    {% for message in ret.signup_form.password.errors %}
-                    <div class="flash">{{ message }}</div>
-                    {% endfor %}
-                    {{ ret.signup_form.password(placeholder="비밀번호", class="form-control") }}
-                </div>
-                <div class="form-group">
-                    <label class="control-label">비밀번호 확인</label>
-                    {% for message in ret.signup_form.password_check.errors %}
-                    <div class="flash">{{ message }}</div>
-                    {% endfor %}
-                    {{ ret.signup_form.password_check(placeholder="비밀번호 확인", class="form-control") }}
-                </div>
-                <div class="form-group">
+                    <label class="control-label">주소 (시구동)</label>
                     <div class="local-search" id="local-search">
                         <div class="company-item-region" id="sigudong-search" >
                             <div class="item_box item-region on">
@@ -125,32 +83,28 @@
                 </div>
                 <div class="form-group">
                     <label class="control-label">나머지 주소</label>
-                    {% for message in ret.signup_form.address.errors %}
+                    {% for message in ret.update_user_form.address.errors %}
                     <div class="flash">{{ message }}</div>
                     {% endfor %}
-                    {{ ret.signup_form.address(placeholder="나머지 주소" ,class="form-control") }}
+                    {{ ret.update_user_form.address(placeholder="나머지 주소" ,class="form-control") }}
                 </div>
                 <div class="form-group">
                     <label class="control-label">연락처</label>
-                    {% for message in ret.signup_form.tel.errors %}
+                    {% for message in ret.update_user_form.tel.errors %}
                     <div class="flash">{{ message }}</div>
                     {% endfor %}
-                    {{ ret.signup_form.tel(placeholder="연락처(XXX-XXXX-XXXX형식으로 입력)", class="form-control") }}
+                    {{ ret.update_user_form.tel(placeholder="연락처(XXX-XXXX-XXXX형식으로 입력)", class="form-control") }}
                 </div>
 
-                <p><button name="submit" type="submit" class="btn btn-store btn-block">회원가입</button></p>
+                <p><button name="submit" type="submit" class="btn btn-store btn-block">회원정보 수정</button></p>
             </form>
         </div>
-    </div>
-
-    <div class="row">
-        <div class="col-sm-12 text-center show-more">
-            <a href="/" class="btn btn-outline">돌아가기</a>
+        <div class="col-sm-3 blog-sidebar">
+            {% include "mypage_category.html" %}
         </div>
     </div>
-
 </div>
-<script type="text/javascript">
+<script>
     window.state = {};
 function bindLocal1(obj) {
         var map = window.state.map;
@@ -249,7 +203,7 @@ function findNode(v1, v2, v3) {
         }
         return null;
     }
-function initLocalSearch() {
+function initLocalSearch(callBack) {
     var items = $(".local-search .company-item-region select");
         var local1 = $(items[0]);
         local1.children().remove();
@@ -307,9 +261,20 @@ function initLocalSearch() {
         var zoom = 20 - parseInt(selected.data("zoom"));
         location.href = "/search/map?lat=" + lat + "&lng=" + lng + "&zoom="+ zoom;
     });
+    callBack();
+}
+function update_sigudong() {
+    $("#si").val("{{ret.si}}").attr("selected","selected");
+    bindLocal2(".company-item-region");
+    $("#gu").val("{{ret.gu}}").attr("selected","selected");
+    bindLocal3(".company-item-region");
+    $("#dong").val("{{ret.dong}}").attr("selected","selected");
 }
 $(document).ready(function() {
-    initLocalSearch();
+     $('.pagination ul').addClass('pagination');
+    initLocalSearch(function() {
+        update_sigudong();
+    });
 });
 </script>
 {% endblock %}

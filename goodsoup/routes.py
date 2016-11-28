@@ -17,7 +17,13 @@ from config import (
         GS_RESIZE_CACHE_DIR,
         GS_IMP_TEST_KEY,
         GS_IMP_TEST_API_KEY,
-        GS_IMP_TEST_SECRET_KEY
+        GS_IMP_TEST_SECRET_KEY,
+        MAIL_SERVER,
+        MAIL_PORT,
+        MAIL_USE_TLS,
+        MAIL_USE_SSL,
+        MAIL_USERNAME,
+        MAIL_PASSWORD,
         )
 from flask.ext.login import LoginManager, UserMixin, current_user, login_user, logout_user, login_required
 from datetime import datetime, timedelta
@@ -27,6 +33,9 @@ import utils
 import time
 import json
 import flask_resize
+import string
+import random
+from decorators import async
 from iamport import Iamport
 
 app = Flask(__name__)
@@ -36,7 +45,16 @@ app.config['UPLOAD_FOLDER']             = UPLOAD_FOLDER
 app.config['RESIZE_URL']                = GS_RESIZE_URL
 app.config['RESIZE_ROOT']               = GS_RESIZE_ROOT
 app.config['RESIZE_CACHE_DIR']          = GS_RESIZE_CACHE_DIR
+app.config["MAIL_SERVER"] = MAIL_SERVER
+app.config["MAIL_PORT"] = MAIL_PORT
+app.config["MAIL_USE_TLS"] = False
+app.config["MAIL_USE_SSL"] = True
+app.config["MAIL_USERNAME"] = MAIL_USERNAME 
+app.config["MAIL_PASSWORD"] = MAIL_PASSWORD
 flask_resize.Resize(app)
+from flask.ext.mail import Mail
+mail = Mail(app)
+from flask.ext.mail import Message
 
 iamport = Iamport(imp_key=GS_IMP_TEST_API_KEY,imp_secret=GS_IMP_TEST_SECRET_KEY)
 
@@ -59,6 +77,9 @@ from forms import (
         Board_create_form,
         Comment_create_form,
         Soup_create_form,
+        Update_user_form,
+        Update_password_form,
+        Find_password_form,
         )
 
 db.init_app(app)
@@ -85,8 +106,26 @@ def address():
 # address 
 #
 
-navbar_menus = utils.enum('HOME','SOUP','ABOUT','BOARD','STORE','LOGIN','CART','CHECK')
+navbar_menus = utils.enum('HOME','SOUP','ABOUT','BOARD','STORE','LOGIN','CART','CHECK','MYPAGE','ADMIN')
 
+### EMAIL
+def generate_temp_password():
+    alphabet     = list(string.ascii_uppercase)+list(string.ascii_lowercase)
+    ret = ''
+    for i in xrange(20):
+        ret += alphabet[random.randint(0,len(alphabet)-1)]
+    return ret
+
+@async
+def send_async_email(app, msg):
+    with app.app_context():
+        mail.send(msg)
+
+def send_email(subject, sender, recipients, text_body, html_body):
+    msg = Message(subject, sender=sender, recipients=recipients)
+    msg.body = text_body
+    msg.html = html_body
+    send_async_email(app,msg)
 
 ### CREATE
 @app.route('/save_board',methods=['POST'])
@@ -423,6 +462,59 @@ def update_cart():
         return json.dumps({'message': 'update cart success'})
 
 
+@app.route('/update_user',methods=['POST'])
+@login_required
+def update_user():
+    with app.app_context():
+        update_user_form = Update_user_form()
+    user_id = session['user_id']
+    user = User.query.filter_by(id=user_id).first()
+    ret = {
+        'navbar_menus': navbar_menus,
+        'selected_navbar_index': navbar_menus.MYPAGE,
+        'user': user
+        }
+    if not update_user_form.validate():
+        ret['update_user_form']          = update_user_form 
+        ret['si']                   = user.si
+        ret['gu']                   = user.gu
+        ret['dong']                 = user.dong
+        return render_template('mypage_update_user.html',ret=ret)
+    user.si = request.form.get('si')
+    user.gu = request.form.get('gu')
+    user.dong = request.form.get('dong')
+    user.address = update_user_form.address.data
+    user.tel = update_user_form.tel.data
+    session['si']       = user.si
+    session['gu']       = user.gu
+    session['dong']     = user.dong
+    session['address']  = user.address
+    session['tel']      = user.tel
+    db.session.commit()
+    return redirect('/mypage/0')
+
+@app.route('/update_password',methods=['POST'])
+@login_required
+def update_password():
+    with app.app_context():
+        update_password_form = Update_password_form()
+    user = User.query.filter_by(id=session['user_id']).first()
+    ret = {
+        'navbar_menus': navbar_menus,
+        'selected_navbar_index': navbar_menus.MYPAGE,
+        'user': user
+        }
+    if not update_password_form.validate():
+        ret['update_password_form'] = update_password_form
+        return render_template('mypage_update_password.html',ret=ret)
+    if not user.check_password(update_password_form.cur_password.data):
+        ret['update_password_form'] = update_password_form
+        update_password_form.cur_password.errors.append(u'기존 비밀번호가 틀렸습니다')
+        return render_template('mypage_update_password.html',ret=ret)
+
+    user.set_password(update_password_form.password.data)
+    db.session.commit()
+    return redirect('/mypage/0')
 
 ###
 
@@ -798,6 +890,7 @@ def checkout():
     cart_list = session['cart_list']
     soups = []
     total_price = 0
+    delivery_price = 0
     total_cnt   = 0
     for item in cart_list:
         soup = Soup.query.filter_by(id=int(item['soup_id'])).first()
@@ -806,12 +899,17 @@ def checkout():
         total_cnt += int(item['soup_cnt'])
         total_price += int(soup['discounted_price'])*int(soup['soup_cnt'])
         soups.append(soup)
+    if total_price < 10000:
+        delivery_price = 2000
+    payment_price = total_price + delivery_price 
     ret = {
             'navbar_menus': navbar_menus,
             'selected_navbar_index': navbar_menus.SOUP,
             'soups': soups,
             'total_price': total_price,
             'total_cnt': total_cnt,
+            'delivery_price': delivery_price,
+            'payment_price': payment_price 
             }
     return render_template('checkout.html',ret=ret)
 
@@ -824,6 +922,7 @@ def mpayments_complete():
         cart_list = session['cart_list']
         soups = []
         total_price = 0
+        delivery_price = 0
         total_cnt   = 0
         for item in cart_list:
             soup = Soup.query.filter_by(id=int(item['soup_id'])).first()
@@ -832,14 +931,19 @@ def mpayments_complete():
             total_cnt += int(item['soup_cnt'])
             total_price += int(soup['discounted_price'])*int(soup['soup_cnt'])
             soups.append(soup)
+        if total_price < 10000:
+            delivery_price = 2000
+        payment_price = total_price + delivery_price 
 
-        if iamport.is_paid(total_price, response=response):
+        if iamport.is_paid(payment_price, response=response):
             apply_num       = response['apply_num']
             address         = response['buyer_addr']
             tel             = response['buyer_tel']
             imp_uid         = response['imp_uid']
             paid_amount     = response['amount']
             new_payment     = Payment(apply_num,address,tel,imp_uid,paid_amount)
+            if 'logged_in' in session:
+                new_payment.user_id = session['user_id']
             db.session.add(new_payment)
             db.session.commit()
 
@@ -864,6 +968,7 @@ def payments_complete():
         cart_list = session['cart_list']
         soups = []
         total_price = 0
+        delivery_price = 0
         total_cnt   = 0
         for item in cart_list:
             soup = Soup.query.filter_by(id=int(item['soup_id'])).first()
@@ -872,14 +977,19 @@ def payments_complete():
             total_cnt += int(item['soup_cnt'])
             total_price += int(soup['discounted_price'])*int(soup['soup_cnt'])
             soups.append(soup)
+        if total_price < 10000:
+            delivery_price = 2000
+        payment_price = total_price + delivery_price 
 
-        if iamport.is_paid(total_price, response=response):
+        if iamport.is_paid(payment_price , response=response):
             apply_num       = response['apply_num']
             address         = response['buyer_addr']
             tel             = response['buyer_tel']
             imp_uid         = response['imp_uid']
             paid_amount     = response['amount']
             new_payment     = Payment(apply_num,address,tel,imp_uid,paid_amount)
+            if 'logged_in' in session:
+                new_payment.user_id = session['user_id']
             db.session.add(new_payment)
             db.session.commit()
 
@@ -959,7 +1069,7 @@ def admin():
     payments = get_payment_information(payments)
     ret = {
             'navbar_menus': navbar_menus,
-            'selected_navbar_index': navbar_menus.LOGIN,
+            'selected_navbar_index': navbar_menus.ADMIN,
             'payments': payments,
             'pagination': pagination,
             }
@@ -981,6 +1091,95 @@ def payment_state_edit():
         db.session.commit()
         return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 
     return json.dumps({'success':False}), 402, {'ContentType':'application/json'}
+
+@app.route('/mypage/<int:mypage_category>')
+@login_required
+def mypage(mypage_category):
+    search = False
+    per_page = 20
+    q = request.args.get('q')
+    if q:
+        search = True
+    try:
+        page = int(request.args.get('page',1))
+    except ValueError:
+        page = 1
+    user_id = session['user_id']
+    user = User.query.filter_by(id=user_id).first()
+
+    ret = {
+            'navbar_menus': navbar_menus,
+            'selected_navbar_index': navbar_menus.MYPAGE,
+            'user': user
+            }
+    if mypage_category == 0:
+        payments = Payment.query.filter_by(user_id=user_id).order_by(Payment.created_at.desc()).limit(per_page).offset((page-1)*per_page)
+        total_count = Payment.query.filter_by(user_id=user_id).count()
+        pagination = Pagination(page=page, total=total_count, search=search, record_name='payment', per_page=per_page)
+        payments = get_payment_information(payments)
+        ret['payments'] = payments
+        ret['pagination'] = pagination
+        return render_template('mypage.html',ret=ret)
+    elif mypage_category == 1:
+        with app.app_context():
+            update_user_form = Update_user_form()
+        update_user_form.username.data   = user.username
+        update_user_form.address.data    = user.address
+        update_user_form.tel.data        = user.tel
+        ret['update_user_form']          = update_user_form 
+        ret['si']                   = user.si
+        ret['gu']                   = user.gu
+        ret['dong']                 = user.dong
+        return render_template('mypage_update_user.html',ret=ret)
+    elif mypage_category == 2:
+        with app.app_context():
+            update_password_form = Update_password_form()
+        ret['update_password_form'] = update_password_form
+        return render_template('mypage_update_password.html',ret=ret)
+    else :
+        return redirect('/')
+
+@app.route('/find_password')
+def find_password():
+    with app.app_context():
+        find_password_form = Find_password_form()
+    ret = {
+            'navbar_menus': navbar_menus,
+            'selected_navbar_index': navbar_menus.LOGIN,
+            'find_password_form': find_password_form,
+            }
+    return render_template('find_password.html',ret=ret)
+
+@app.route('/send_new_password',methods=['POST'])
+def send_new_password():
+    with app.app_context():
+        find_password_form = Find_password_form()
+    ret = {
+            'navbar_menus': navbar_menus,
+            'selected_navbar_index': navbar_menus.LOGIN,
+            'find_password_form': find_password_form,
+            }
+    if not find_password_form.validate():
+        return render_template('find_password.html',ret=ret)
+    email = find_password_form.email.data.lower()
+    ret['email'] = email
+    user = User.query.filter_by(email=email).first()
+    tmp_password = generate_temp_password()
+    user.set_password(tmp_password)
+    db.session.commit()
+    send_email(u'[착한탕국] %s 임시 비밀번호 입니다.'%user.email,\
+                u'ko.goodsoup@gmail.com',\
+                [user.email],\
+                u'임시 비밀번호 : %s'%tmp_password,\
+                u'임시 비밀번호 : %s'%tmp_password)
+    return render_template('send_email_result.html',ret=ret)
+
+@app.route('/test_mail')
+def test_mail():
+    print send_email('test','help.hausmart@gmail.com',['sisobus@naver.com'],'test','test')
+    return redirect('/')
+    
+
 
 ###
 

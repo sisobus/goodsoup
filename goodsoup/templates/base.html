@@ -52,7 +52,7 @@
                     </a>
                     </li>
                     {% if 'logged_in' in session and session['level'] >= 99 %}
-                    <li >
+                    <li {% if ret.navbar_menus.ADMIN == ret.selected_navbar_index %}class="active"{% endif %}>
                     <a href="/admin">
                         관리자 페이지
                     </a>
@@ -64,8 +64,11 @@
                     </li>
                     {% endif %}
                     {% if 'logged_in' in session %}
+                    <li {% if ret.navbar_menus.MYPAGE == ret.selected_navbar_index %}class="active"{% endif %}>
+                    <a href="/mypage/0">{{session['username']}}님 페이지</a>
+                    </li>
                     <li>
-                    <a href="/logout">{{session['username']}}님/로그아웃</a>
+                    <a href="/logout">로그아웃</a>
                     </li>
                     {% endif %}
                 </div>

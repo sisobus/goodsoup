@@ -98,7 +98,7 @@ input[type="radio"] {
                 <tr>
                     <td>배송비 :</td>
                     <td></td>
-                    <td class="text-right">0원</td>
+                    <td class="text-right">{{'{:,}'.format(ret.delivery_price)}}원</td>
                 </tr>
                 <tr>
                     <td>부가세 :</td>
@@ -109,7 +109,7 @@ input[type="radio"] {
                     <td>총 :</td>
                     <td></td>
                     <td id="total" class="text-right">
-                        {{ '{:,}'.format(ret.total_price)}}원
+                        {{ '{:,}'.format(ret.payment_price)}}원
                     </td>
                 </tr>
                 </tbody>
@@ -364,7 +364,7 @@ $('#pay').click(function() {
         pay_method : checked_pay_method,
         merchant_uid : 'merchant_' + new Date().getTime(),
         name : pay_name,
-        amount : {{ret.total_price}},
+        amount : {{ret.payment_price}},
         {% if 'logged_in' in session %}
         buyer_email : '{{ session['email'] }}',
         {% endif %}
