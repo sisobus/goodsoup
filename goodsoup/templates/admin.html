@@ -52,10 +52,10 @@
                         <th style="5%;text-align:center;" >
                             No
                         </th>
-                        <th style="width:27%;text-align:center;">
+                        <th style="width:23%;text-align:center;">
                             주소
                         </th>
-                        <th style="width:25%;text-align:center;">
+                        <th style="width:24%;text-align:center;">
                             국 
                         </th>
                         <th style="width:5%;text-align:center;">
@@ -70,6 +70,9 @@
                         <th style="width:9%;text-align:center;">
                             날짜
                         </th>
+                        <th style="width:5%;text-align:center;">
+                            차수
+                        </th>
                         <th style="width:9%;text-align:center;">
                             배송 상태
                         </th>
@@ -81,10 +84,10 @@
                     <th scope="row" style="width:5%;text-align:right;">
                         {{ payment.id }}
                     </th>
-                    <td style="width:27%;">
+                    <td style="width:23%;">
                         {{ payment.address }}
                     </td>
-                    <td style="width:25%;">
+                    <td style="width:24%;">
                         {% for soup in payment.soups %}
                             {% if soup != payment.soups[0] %}
                             ,&nbsp;
@@ -102,7 +105,10 @@
                         {{ '{:,}'.format(payment.paid_amount|int) }}원
                     </td>
                     <td style="width:9%;text-align:center;">
-                        {{ payment.created_at.strftime('%Y-%m-%d') }}
+                        {{ payment.created_at }}
+                    </td>
+                    <td style="width:5%;text-align:center;">
+                        {{ payment.delivery_time }}
                     </td>
                     <td style="width:9%;text-align:center;">
                         <select id="state-{{payment.id}}" name="state-{{payment.id}}" class="form-control">

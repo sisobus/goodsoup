@@ -94,6 +94,8 @@ def load_user(user_id):
 #
 with open('/var/www/goodsoup/goodsoup/static/json/address.json','r') as fp:
     addresses = json.loads(fp.read())
+with open('/var/www/goodsoup/goodsoup/static/json/20161129.json','r') as fp:
+    addresses_20161129 = json.loads(fp.read())
 
 @app.route('/json/address')
 def address():
@@ -101,6 +103,10 @@ def address():
     : search : route_address
     """
     return jsonify(results=addresses)
+
+@app.route('/json/20161129')
+def address_20161129():
+    return jsonify(results=addresses_20161129)
 #
 # address 
 #
@@ -362,6 +368,7 @@ def get_payment_information(payments):
                 'paid_amount': payment.paid_amount,
                 'apply_num': payment.apply_num,
                 'state': payment.state,
+                'delivery_time': payment.delivery_time,
                 'soups': soups,
                 'user': user,
                 }
@@ -947,7 +954,8 @@ def mpayments_complete():
             tel             = response['buyer_tel']
             imp_uid         = response['imp_uid']
             paid_amount     = response['amount']
-            new_payment     = Payment(apply_num,address,tel,imp_uid,paid_amount)
+            delivery_time   = json.loads(response['custom_data'])['delivery_time']
+            new_payment     = Payment(apply_num,address,tel,imp_uid,paid_amount,delivery_time)
             if 'logged_in' in session:
                 new_payment.user_id = session['user_id']
             db.session.add(new_payment)
@@ -993,7 +1001,8 @@ def payments_complete():
             tel             = response['buyer_tel']
             imp_uid         = response['imp_uid']
             paid_amount     = response['amount']
-            new_payment     = Payment(apply_num,address,tel,imp_uid,paid_amount)
+            delivery_time   = json.loads(response['custom_data'])['delivery_time']
+            new_payment     = Payment(apply_num,address,tel,imp_uid,paid_amount,delivery_time)
             if 'logged_in' in session:
                 new_payment.user_id = session['user_id']
             db.session.add(new_payment)
