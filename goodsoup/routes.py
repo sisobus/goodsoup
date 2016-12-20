@@ -947,6 +947,7 @@ def mpayments_complete():
         if total_price < 10000:
             delivery_price = 2000
         payment_price = total_price + delivery_price 
+        print total_price, delivery_price, payment_price 
 
         if iamport.is_paid(payment_price, response=response):
             apply_num       = response['apply_num']

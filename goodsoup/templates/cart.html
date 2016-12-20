@@ -46,11 +46,11 @@
                         data: data,
                         type: 'POST',
                         success: function(response) {
-                            console.log(response);
+                            //console.log(response);
                         //    window.location.href="/cart"
                         },
                         error: function(error) {
-                            console.log(error);
+                            //console.log(error);
                         }
                     });
                     total = total.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g,'$1,');
@@ -67,11 +67,11 @@
                         data: data,
                         type: 'POST',
                         success: function(response) {
-                            console.log(response);
+                            //console.log(response);
                             window.location.href="/cart"
                         },
                         error: function(error) {
-                            console.log(error);
+                            //console.log(error);
                         }
                     });
                 });
@@ -90,8 +90,12 @@ if nan:
 
             <h4 style="color:red;">주문 유의사항</h4>
             <p style="line-height:1.6;">
+            * 새벽에 배송해드립니다. <br>
+            * 토요일 일요일은 배송이 되지 않습니다.
+            <!--
             * 오후 7시 이전 주문 완료 시 <span style="color:red;">다음날 배송</span>됩니다. <br>
             * 오후 7시 이후 주문 완료 시 <span style="color:red;">이틀후</span> 배송됩니다. 
+            -->
             </p>
 
         </div>
@@ -141,7 +145,7 @@ if nan:
 
     <div class="row">
         <div class="col-sm-12 text-center show-more">
-            <a href="/" class="btn btn-outline">돌아가기</a>
+            <a href="/soup" class="btn btn-outline">돌아가기</a>
         </div>
     </div>
 

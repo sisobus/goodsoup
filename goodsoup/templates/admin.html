@@ -56,7 +56,7 @@
                         <th style="width:23%;text-align:center;">
                             주소
                         </th>
-                        <th style="width:24%;text-align:center;">
+                        <th style="width:29%;text-align:center;">
                             국 
                         </th>
                         <th style="width:5%;text-align:center;">
@@ -71,9 +71,11 @@
                         <th style="width:9%;text-align:center;">
                             날짜
                         </th>
+                        <!--
                         <th style="width:5%;text-align:center;">
                             차수
                         </th>
+                        -->
                         <th style="width:9%;text-align:center;">
                             배송 상태
                         </th>
@@ -88,7 +90,7 @@
                     <td style="width:23%;">
                         {{ payment.address }}
                     </td>
-                    <td style="width:24%;">
+                    <td style="width:29%;">
                         {% for soup in payment.soups %}
                             {% if soup != payment.soups[0] %}
                             ,&nbsp;
@@ -108,9 +110,11 @@
                     <td style="width:9%;text-align:center;">
                         {{ payment.created_at }}
                     </td>
+                    <!--
                     <td style="width:5%;text-align:center;">
                         {{ payment.delivery_time }}
                     </td>
+                    -->
                     <td style="width:9%;text-align:center;">
                         <select id="state-{{payment.id}}" name="state-{{payment.id}}" class="form-control">
                             <option {% if payment.state == 0 %}selected="selected"{% endif %} value="0">
@@ -150,10 +154,10 @@ $(document).ready(function() {
             data: data,
             type: 'POST',
             success: function(response) {
-                console.log(response);
+                //console.log(response);
             },
             error: function(error) {
-                console.log(error);
+                //console.log(error);
             }
          });
      });

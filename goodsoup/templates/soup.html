@@ -35,13 +35,46 @@ card_header {
     padding-top: 5px;
 }
 #soup_body {
+    /*
     height: 54px;
+    */
+    height: 75px;
 }
 .bg {
     border-bottom: 0px solid #5cc0ff;
     max-width: 100%;
     height:270px;
 } 
+#order-button {
+    display: inline-block;
+    position: absolute;
+    right: 20px;
+    height: 35px;
+    line-height: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
+    bottom: 9px;
+    margin:0;
+}
+#order-button:hover {
+    top: inherit;
+}
+#order-button-soldout {
+    background-color: #dd3061;
+    display: inline-block;
+    position: absolute;
+    right: 20px;
+    height: 35px;
+    line-height: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
+    bottom: 9px;
+    margin:0;
+}
+#order-button-soldout:hover {
+    top: inherit;
+}
+
 @media screen and (max-width: 767px) {
     .bg {
         height: 150px;
@@ -51,6 +84,12 @@ card_header {
     }
     #soup-body-padding {
         padding-left:0px;
+    }
+    #order-button {
+        right:10px;
+    }
+    #order-button-soldout {
+        right:10px;
     }
 }
 .ribbon-wrapper-green {
@@ -153,14 +192,24 @@ card_header {
                     <div id="soup-body-padding" >
                         <a href="/soup_detail/{{soup.id}}">
                             <h4 style="font-weight:bold;padding: 1px 0px 2px 10px;margin:0;">
-                                {{ soup.name }} <span style="font-size: 14px;color:#ababab;">(남은 수량:{{soup.amount}})</span>
+                                {{ soup.name }} <!--<span style="font-size: 14px;color:#ababab;">(남은 수량:{{soup.amount}})</span>
+                                -->
                             </h4>
                         </a>
                         <a href="/soup_detail/{{soup.id}}">
                             {% if soup.price == soup.discounted_price %}
-                            <h5 style="vertical-align:middle; padding: 1px 0px 2px 10px;color:black;margin-top:5px;font-weight:bold;">{{ '{:,}'.format(soup.price)}}원</h5>
+                            <h5 style="display:inline-block;vertical-align:middle; padding: 1px 0px 2px 10px;color:black;margin-top:5px;font-weight:bold;">{{ '{:,}'.format(soup.price)}}원</h5>
                             {% elif soup.price != soup.discounted_price %}
-                            <h5 style="vertical-align:middle; padding: 1px 0px 2px 10px;color:black;margin-top:5px;font-weight:bold;">{{'{:,}'.format(soup.discounted_price)}}원 <del ><span style="color:#ababab;">{{'{:,}'.format(soup.price)}}원</span></del></h5>
+                            <h5 style="display:inline-block;vertical-align:middle; padding: 1px 0px 2px 10px;color:black;margin-top:5px;font-weight:bold;">{{'{:,}'.format(soup.discounted_price)}}원 <del ><span style="color:#ababab;">{{'{:,}'.format(soup.price)}}원</span></del></h5>
+                            {% endif %}
+                            {% if soup.amount == 0 %}
+                            <button class="btn" id="order-button-soldout">
+                                품절
+                            </button>
+                            {% else %}
+                            <button class="btn" id="order-button">
+                                주문하기
+                            </button>
                             {% endif %}
                         </a>
                     </div>
@@ -200,7 +249,8 @@ card_header {
                     <div id="soup-body-padding">
                         <a href="/soup_detail/{{soup.id}}">
                             <h4 style="font-weight:bold;padding: 1px 0px 2px 10px;margin:0;">
-                                {{ soup.name }} <span style="font-size: 14px;color:#ababab;">(남은 수량:{{soup.amount}})</span>
+                                {{ soup.name }} <!--<span style="font-size: 14px;color:#ababab;">(남은 수량:{{soup.amount}})</span>
+                                -->
                             </h4>
                         </a>
                         <a href="/soup_detail/{{soup.id}}">
@@ -208,6 +258,15 @@ card_header {
                             <h5 style="vertical-align:middle; padding: 1px 0px 2px 10px;color:black;margin-top:5px;font-weight:bold;">{{'{:,}'.format(soup.price)}}원</h5>
                             {% elif soup.price != soup.discounted_price %}
                             <h5 style="vertical-align:middle; padding: 1px 0px 2px 10px;color:black;margin-top:5px;font-weight:bold;">{{'{:,}'.format(soup.discounted_price)}}원 <del ><span style="color:#ababab;">{{'{:,}'.format(soup.price)}}원</span></del></h5>
+                            {% endif %}
+                            {% if soup.amount == 0 %}
+                            <button class="btn" id="order-button-soldout">
+                                품절
+                            </button>
+                            {% else %}
+                            <button class="btn" id="order-button">
+                                주문하기
+                            </button>
                             {% endif %}
                         </a>
                     </div>

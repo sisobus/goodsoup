@@ -27,11 +27,11 @@
             url: '/delete_comment/{{comment.id}}',
             type: 'POST',
             success: function(response) {
-            console.log(response);
+            //console.log(response);
             window.location.href = "/board_detail/{{ret.board.id}}";
             },
             error: function(error){
-                console.log(error);
+                //console.log(error);
             }
         });
     });

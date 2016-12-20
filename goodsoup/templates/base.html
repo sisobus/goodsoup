@@ -13,7 +13,18 @@
         <link rel="stylesheet" href="{{ url_for('static',filename='css/icomoon/style.css') }}">
         <link rel="stylesheet" href="{{ url_for('static',filename='css/summernote.css') }}">
         <link rel="stylesheet" href="{{ url_for('static',filename='css/dropzone.css') }}">
+<!--
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+-->
+<!--[if lt IE 9]>
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<![endif]-->
+<!--[if gte IE 9]>
+<script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+<![endif]-->
+<!--[if !IE]> -->
+<script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+<!-- <![endif]-->
         <script type="text/javascript" src="https://service.iamport.kr/js/iamport.payment-1.1.2.js"></script>
         <script src="https://use.fontawesome.com/4870ab41b1.js"></script>
         <script type="text/javascript" src="{{ url_for('static',filename='js/summernote.js') }}"></script>
@@ -98,6 +109,14 @@
                         <a class="nav-icon-outline cart pull-right" href="/cart"><i class="icon-cart"></i><span class="badge">{{session['cart_list']|length}}</span></a>
                     </div>
 
+                </div>
+            </div>
+            <div class="container-fluid">
+                <div class="jumbotron">
+                    <h1>
+                        아직 판매하지 않습니다.<br>
+                        조금만 더 기다려주시기 바랍니다.
+                    </h1>
                 </div>
             </div>
             {% block content %}
